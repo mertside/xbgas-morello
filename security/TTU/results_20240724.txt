@@ -1,0 +1,216 @@
+============================================================
+Running TTU tests
+ 
+DATE: 
+Wed Jul 24 20:43:18 BST 2024
+ 
+UNAME: 
+FreeBSD morello102 14.0-CURRENT FreeBSD 14.0-CURRENT aarch64c 1400094 #0 releng/23.11-3b754ceed4ae: Wed Dec 13 08:54:18 UTC 2023     jenkins@focal:/local/scratch/jenkins/workspace/CheriBSD-pipeline_releng_23.11@2/cheribsd-morello-purecap-build/local/scratch/jenkins/workspace/CheriBSD-pipeline_releng_23.11@2/cheribsd/arm64.aarch64c/sys/GENERIC-MORELLO arm64
+ 
+SYSCTL: 
+hw.machine: arm64
+hw.model: Research Morello SoC r0p0
+hw.ncpu: 4
+hw.usermem: 32387514368
+hw.machine_arch: aarch64c
+============================================================
+ 
+------------------------------
+TTU_T1:
+Starting Test: Double Free
+Test Complete: Double Free
+
+Freeing memory(1)
+Freeing memory(1)
+Freeing memory(1)
+Freeing memory(1)
+Freeing memory(2)
+Freeing memory(2)
+Freeing memory(2)
+Freeing memory(2)
+[R] Thread 0 finished.
+[R] Thread 1 finished.
+[R] Thread 2 finished.
+[R] Thread 3 finished.
+ 
+------------------------------
+TTU_T2:
+SKIPPED
+ 
+------------------------------
+TTU_T3:
+
+ 
+------------------------------
+TTU_T4:
+SKIPPED
+ 
+------------------------------
+TTU_T5:
+Starting Test: Use-After-Free
+Starting Test: Use-After-Free
+Starting Test: Use-After-Free
+Starting Test: Use-After-Free
+Printing characters of string before free:
+Hello World!Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+Printing characters of string after free:
+Hello World!Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+Test Failed: Use-After-Free
+
+[R] Thread 0 finished.
+Printing characters of string before free:
+Hello World!Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+Printing characters of string after free:
+Hello World!Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+Test Failed: Use-After-Free
+
+[R] Thread 1 finished.
+Printing characters of string before free:
+Hello World!Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+Printing characters of string after free:
+Hello World!Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+Test Failed: Use-After-Free
+
+Printing characters of string before free:
+Hello World!Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+Printing characters of string after free:
+Hello World!Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+Test Failed: Use-After-Free
+
+[R] Thread 2 finished.
+[R] Thread 3 finished.
+ 
+============================================================
+ 
+------------------------------
+TTU_S1:
+
+ 
+------------------------------
+TTU_S2:
+
+ 
+------------------------------
+TTU_S3:
+
+ 
+------------------------------
+TTU_S4:
+Starting test: OOB Read
+Test Complete: OOB Read
+
+Printing characters of public array
+public
+Printing characters of private array from public array
+secretpassword
+Printing characters of public array
+public
+Printing characters of private array from public array
+secretpassword
+Printing characters of public array
+public
+Printing characters of private array from public array
+secretpassword
+Printing characters of public array
+public
+Printing characters of private array from public array
+secretpassword
+[R] Thread 0 finished.
+[R] Thread 1 finished.
+[R] Thread 2 finished.
+[R] Thread 3 finished.
+ 
+------------------------------
+TTU_S5:
+Starting test: OOB Write
+Test Complete: OOB Write
+
+Updating value of first string with ?. 
+Original value: FIRST
+New value: ?????
+Updating value of second string with ? from first string pointer
+Original value: SECOND
+New value: ??????
+Updating value of first string with ?. 
+Original value: FIRST
+New value: ?????
+Updating value of second string with ? from first string pointer
+Original value: SECOND
+New value: ??????
+Updating value of first string with ?. 
+Original value: FIRST
+New value: ?????
+Updating value of second string with ? from first string pointer
+Original value: SECOND
+New value: ??????
+Updating value of first string with ?. 
+Original value: FIRST
+New value: ?????
+Updating value of second string with ? from first string pointer
+Original value: SECOND
+New value: ??????
+[R] Thread 0 finished.
+[R] Thread 1 finished.
+[R] Thread 2 finished.
+[R] Thread 3 finished.
+ 
+============================================================
+ 
+------------------------------
+TTU_R1:
+
+ 
+------------------------------
+TTU_R2:
+
+ 
+------------------------------
+TTU_R3:
+Starting test: UAF to Code Reuse
+Starting test: UAF to Code Reuse
+Starting test: UAF to Code Reuse
+Starting test: UAF to Code Reuse
+Starting test: UAF to Code Reuse
+Count: 1
+Count: 0
+Test Complete: UAF to Code Reuse
+
+Count: 1
+Count: 0
+Test Complete: UAF to Code Reuse
+
+Count: 1
+Count: 0
+Test Complete: UAF to Code Reuse
+
+Count: 1
+Count: 0
+Test Complete: UAF to Code Reuse
+
+[R] Thread 0 finished.
+[R] Thread 1 finished.
+[R] Thread 2 finished.
+[R] Thread 3 finished.
+ 
+------------------------------
+TTU_R4:
+Starting test: Illegal Pointer Dereference
+Thread 1: Address of x: 0x243395e00940
+Thread 1: Value of x: 0
+Thread 2: Address of x: 0x293396400600
+Thread 3: Address of x: 0x243395e002c0
+Thread 3: Value of x: 0
+Thread 2: Value of x: 0
+Thread 0: Address of x: 0x2f3396c00c80
+Thread 0: Value of x: 0
+[R] Thread 0 finished.
+[R] Thread 1 finished.
+[R] Thread 2 finished.
+[R] Thread 3 finished.
+ 
+------------------------------
+TTU_R5:
+SKIPPED
+ 
+============================================================
+ 

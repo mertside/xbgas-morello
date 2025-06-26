@@ -1,0 +1,112 @@
+============================================================
+Running ASU tests
+ 
+DATE: 
+Tue Aug 20 20:29:41 BST 2024
+ 
+UNAME: 
+FreeBSD morello102 14.0-CURRENT FreeBSD 14.0-CURRENT aarch64c 1400094 #0 releng/23.11-3b754ceed4ae: Wed Dec 13 08:54:18 UTC 2023     jenkins@focal:/local/scratch/jenkins/workspace/CheriBSD-pipeline_releng_23.11@2/cheribsd-morello-purecap-build/local/scratch/jenkins/workspace/CheriBSD-pipeline_releng_23.11@2/cheribsd/arm64.aarch64c/sys/GENERIC-MORELLO arm64
+ 
+SYSCTL: 
+hw.machine: arm64
+hw.model: Research Morello SoC r0p0
+hw.ncpu: 4
+hw.usermem: 33882116096
+hw.machine_arch: aarch64c
+============================================================
+ 
+------------------------------
+ASU_T1:
+Starting Test: Double Free
+Freeing memory(1)
+Freeing memory(2)
+Test Failed: Double Free
+ 
+------------------------------
+ASU_T2:
+ptr0: 0x40c0f000
+ptr1: 0x40c0f010
+Target: 0x40c0f020
+
+ptr_x: 0x40c0f030
+ptr_y: 0x40c0f040
+ 
+------------------------------
+ASU_T3:
+ptr: 0x40c0f000
+Overwritten ptr: 0x130e40
+
+victim: 0x40c0f030
+Test Failed: Heap manipulation leading to arbitrary memory allocation
+ 
+------------------------------
+ASU_T4:
+d: 0x40c0f000
+e: 0x40c0f010
+
+g: 0x40c10000 -> 0x40c10050
+h: 0x40c0f020
+h: victim's data
+ 
+------------------------------
+ASU_T5:
+Starting Test: Use-After-Free
+Printing characters of string before free:
+H
+Printing characters of string after free:
+
+Test Failed: Use-After-Free
+ 
+============================================================
+ 
+------------------------------
+ASU_S1: Free not at start
+
+ 
+------------------------------
+ASU_S2: Free not on heap
+Starting test: Free not on Heap
+Printing characters of string before free:
+Hello World!
+Attempting to free string not on heap
+Printing characters of string after free:
+Hello World!
+Test Failed: Free not on Heap
+ 
+------------------------------
+ASU_S3: Null pointer dereference
+
+ 
+------------------------------
+ASU_S4: Out of bounds read
+
+ 
+------------------------------
+ASU_S5: Out of bounds write
+
+ 
+============================================================
+ 
+------------------------------
+ASU_R1:
+
+ 
+------------------------------
+ASU_R2:
+
+ 
+------------------------------
+ASU_R3:
+
+ 
+------------------------------
+ASU_R4:
+Address of x: 0x80000000
+Value of x: 0
+ 
+------------------------------
+ASU_R5:
+
+ 
+============================================================
+ 

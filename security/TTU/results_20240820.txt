@@ -1,0 +1,289 @@
+============================================================
+Running TTU tests
+ 
+DATE: 
+Tue Aug 20 20:29:32 BST 2024
+ 
+UNAME: 
+FreeBSD morello102 14.0-CURRENT FreeBSD 14.0-CURRENT aarch64c 1400094 #0 releng/23.11-3b754ceed4ae: Wed Dec 13 08:54:18 UTC 2023     jenkins@focal:/local/scratch/jenkins/workspace/CheriBSD-pipeline_releng_23.11@2/cheribsd-morello-purecap-build/local/scratch/jenkins/workspace/CheriBSD-pipeline_releng_23.11@2/cheribsd/arm64.aarch64c/sys/GENERIC-MORELLO arm64
+ 
+SYSCTL: 
+hw.machine: arm64
+hw.model: Research Morello SoC r0p0
+hw.ncpu: 4
+hw.usermem: 33882136576
+hw.machine_arch: aarch64c
+ 
+CC: 
+clang version 14.0.0
+Target: aarch64-unknown-freebsd14.0
+Thread model: posix
+InstalledDir: /usr/local64/llvm-morello/bin
+============================================================
+ 
+------------------------------
+TTU_T1: Double Free
+Starting multi-threaded test: Double Free
+[Thread 0] Starting Test: Double Free
+[Thread 2] Starting Test: Double Free
+[Thread 2] Freeing memory(1)
+[Thread 1] Starting Test: Double Free
+[Thread 1] Freeing memory(1)
+Completed multi-threaded test: Double Free:            EXPLOITED!
+[Thread 1] Freeing memory(2)
+[Thread 0] Freeing memory(1)
+[Thread 1] Test Failed: Double Free
+
+[Thread 2] Freeing memory(2)
+[Thread 2] Test Failed: Double Free
+
+[Thread 3] Starting Test: Double Free
+[Thread 3] Freeing memory(1)
+[Thread 3] Freeing memory(2)
+[Thread 0] Freeing memory(2)
+[Thread 0] Test Failed: Double Free
+
+[Thread 3] Test Failed: Double Free
+
+[R] Thread 0 finished.
+[R] Thread 1 finished.
+[R] Thread 2 finished.
+[R] Thread 3 finished.
+ 
+------------------------------
+TTU_T2: HM - Fake Chunk Malloc
+Starting multi-threaded test: Heap Manipulation
+[Thread 0] Starting test: Heap Manipulation
+[Thread 1] Starting test: Heap Manipulation
+[Thread 2] Starting test: Heap Manipulation
+[Thread 3] Starting test: Heap Manipulation
+  [0] ptr0: 0x42600000
+  [0] ptr1: 0x42600010
+  [0] Target: 0x42600020
+
+  [0] ptr_x: 0x42600030
+  [0] ptr_y: 0x42600040
+[Thread 0] Test Passed: Heap manipulation did not allocate on specific address
+  [1] ptr0: 0x42a00000
+  [1] ptr1: 0x42a00010
+  [1] Target: 0x42a00020
+
+  [1] ptr_x: 0x42a00030
+  [1] ptr_y: 0x42a00040
+[Thread 1] Test Passed: Heap manipulation did not allocate on specific address
+  [2] ptr0: 0x42e00000
+  [2] ptr1: 0x42e00010
+  [2] Target: 0x42e00020
+
+  [2] ptr_x: 0x42e00030
+  [2] ptr_y: 0x42e00040
+[Thread 2] Test Passed: Heap manipulation did not allocate on specific address
+  [3] ptr0: 0x43200000
+  [3] ptr1: 0x43200010
+  [3] Target: 0x43200020
+
+  [3] ptr_x: 0x43200030
+  [3] ptr_y: 0x43200040
+[Thread 3] Test Passed: Heap manipulation did not allocate on specific address
+Completed multi-threaded test: Heap Manipulation:      EXPLOITED!
+[R] Thread 0 finished.
+[R] Thread 1 finished.
+[R] Thread 2 finished.
+[R] Thread 3 finished.
+ 
+------------------------------
+TTU_T3: HM - House Of Spirit
+Starting multi-threaded test: Heap Manipulation
+[Thread 0] Starting test: Heap Manipulation
+[Thread 3] Starting test: Heap Manipulation
+[Thread 2] Starting test: Heap Manipulation
+[Thread 1] Starting test: Heap Manipulation
+[Thread 0] ptr: 0x42600000
+[Thread 0] Overwritten ptr: 0x1354d0
+[Thread 0] victim: 0x42600030
+[Thread 0] Test Failed: Heap manipulation leading to arbitrary memory allocation
+[Thread 3] ptr: 0x42a00000
+[Thread 3] Overwritten ptr: 0x1354d0
+[Thread 3] victim: 0x42a00030
+[Thread 3] Test Failed: Heap manipulation leading to arbitrary memory allocation
+[Thread 2] ptr: 0x42e00000
+[Thread 2] Overwritten ptr: 0x1354d0
+[Thread 2] victim: 0x42e00030
+[Thread 2] Test Failed: Heap manipulation leading to arbitrary memory allocation
+[Thread 1] ptr: 0x43200000
+[Thread 1] Overwritten ptr: 0x1354d0
+[Thread 1] victim: 0x43200030
+[Thread 1] Test Failed: Heap manipulation leading to arbitrary memory allocation
+Completed multi-threaded test: Heap Manipulation:      EXPLOITED!
+[R] Thread 0 finished.
+[R] Thread 1 finished.
+[R] Thread 2 finished.
+[R] Thread 3 finished.
+ 
+------------------------------
+TTU_T4: HM - Parent and Child Chunk (Poison Null Byte)
+
+ 
+------------------------------
+TTU_T5: Use After Free
+Starting multi-threaded test: Use-After-Free
+[Thread 0] Starting test: Use-After-Free
+[Thread 1] Starting test: Use-After-Free
+[Thread 2] Starting test: Use-After-Free
+[Thread 3] Starting test: Use-After-Free
+[Thread 0] Printing characters of string before free:
+Hello World! Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+[Thread 0] Printing characters of string after free:
+Hello World! Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+[Thread 0] Test Failed: Use-After-Free
+[Thread 1] Printing characters of string before free:
+Hello World! Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+[Thread 1] Printing characters of string after free:
+Hello World! Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+[Thread 1] Test Failed: Use-After-Free
+[Thread 2] Printing characters of string before free:
+Hello World! Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+[Thread 2] Printing characters of string after free:
+Hello World! Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+[Thread 2] Test Failed: Use-After-Free
+[Thread 3] Printing characters of string before free:
+Hello World! Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+[Thread 3] Printing characters of string after free:
+Hello World! Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+[Thread 3] Test Failed: Use-After-Free
+Completed multi-threaded test: Use-After-Free:         EXPLOITED!
+[R] Thread 0 finished.
+[R] Thread 1 finished.
+[R] Thread 2 finished.
+[R] Thread 3 finished.
+ 
+============================================================
+ 
+------------------------------
+TTU_S1: Free Not At Start
+
+ 
+------------------------------
+TTU_S2: Free Not On Heap
+Starting multi-threaded test: Free not on Heap
+[Thread 0] Starting test: Free not on Heap
+  [Thread 0] Address of string:            0x1017bc
+[Thread 1] Starting test: Free not on Heap
+[Thread 3] Starting test: Free not on Heap
+  [Thread 1] Address of string:            0x1017bc
+[Thread 2] Starting test: Free not on Heap
+  [Thread 2] Address of string:            0x1017bc
+  [Thread 0] Size of string:               16
+  [Thread 2] Size of string:               16
+  [Thread 3] Address of string:            0x1017bc
+  [Thread 3] Size of string:               16
+  [Thread 3] Full capability (inc. meta.): 0x1017bc [rR,0x1017bc-0x1017c9]
+[Thread 3] Printing characters of string before free:
+  [Thread 0] Full capability (inc. meta.): 0x1017bc [rR,0x1017bc-0x1017c9]
+Hello World!  [Thread 2] Full capability (inc. meta.): 0x1017bc [rR,0x1017bc-0x1017c9]
+[Thread 2] Printing characters of string before free:
+Hello World!  [Thread 1] Size of string:               16
+  [Thread 1] Full capability (inc. meta.): 0x1017bc [rR,0x1017bc-0x1017c9]
+[Thread 1] Printing characters of string before free:
+Hello World!
+[Thread 1] Attempting to free string not on heap
+[Thread 0] Printing characters of string before free:
+H
+[Thread 2] Attempting to free string not on heap
+ello World!
+[Thread 0] Attempting to free string not on heap
+
+[Thread 3] Attempting to free string not on heap
+[Thread 1] Printing characters of string after free:
+Hello World!
+[Thread 1] Test completed (this message may not appear if the free causes a crash).
+[Thread 3] Printing characters of string after free:
+Hello World!
+[Thread 3] Test completed (this message may not appear if the free causes a crash).
+[Thread 0] Printing characters of string after free:
+Hello World!
+[Thread 0] Test completed (this message may not appear if the free causes a crash).
+[Thread 2] Printing characters of string after free:
+Hello World!
+[Thread 2] Test completed (this message may not appear if the free causes a crash).
+Completed multi-threaded test: Free not on Heap:       EXPLOITED!
+[R] Thread 0 finished.
+[R] Thread 1 finished.
+[R] Thread 2 finished.
+[R] Thread 3 finished.
+ 
+------------------------------
+TTU_S3: Null Pointer Dereference
+6f20ting726c64210readed test: Null pointer dereference
+[Thread 0] Starting test: Null pointer dereference
+[Thread 3] Starting test: Null pointer dereference
+  [Thread 3] Address of string:            0x10181b
+[Thread 1] Starting test: Null pointer dereference
+  [Thread 1] Address of string:            0x10181b
+  [Thread 0] Address of string:            0x10181b
+  [Thread 0] Size of string:               16
+  [Thread 0] Full capability (inc. meta.): 0x10181b [rR,0x10181b-0x101828]
+  [Thread 0] Address of bad pointer:         0x10181b
+[Thread 2] Starting test: Null pointer dereference
+  [Thread 2] Address of string:            0x10181b
+  [Thread 3] Size of string:               16
+  [Thread 2] Size of string:               16
+  [Thread 2] Full capability (inc. meta.): 0x10181b [rR,0x10181b-0x101828]
+  [Thread 2] Address of bad pointer:         0x10181b
+  [Thread 2] Full capability (inc. meta.):   0x10181b [rR,0x10181b-0x101828]
+[Thread 2] Printing hex characters of known string:
+  [Thread 0] Full capability (inc. meta.):   0x10181b [rR,0x10181b-0x101828]
+48[Thread 0] Printing hex characters of known string:
+6548656c6c6c6c6f20576f726c64210  [Thread 1] Size of string:               16
+  [Thread 1] Full capability (inc. meta.): 0x10181b [rR,0x10181b-0x101828]
+  [Thread 1] Address of bad pointer:         0x10181b
+  [Thread 1] Full capability (inc. meta.):   0x10181b [rR,0x10181b-0x101828]
+[Thread 1] Printing hex characters of known string:
+  [Thread 3] Full capability (inc. meta.): 0x10181b [rR,0x10181b-0x101828]
+  [Thread 3] Address of bad pointer:         0x10181b
+  [Thread 3] Full capability (inc. meta.):   0x10181b [rR,0x10181b-0x101828]
+[Thread 3] Printing hex characters of known string:
+48656c6c6f20576f000
+726c6421[Thread 0] Attempting to dereference NULL pointer:
+Abort Reached: Mitigated!
+0000
+[Thread 3] Attempting to dereference NULL pointer:
+Abort Reached: Mitigated!
+6f20576f726c64210000
+[Thread 2] Attempting to dereference NULL pointer:
+48656c6c6f20576f726c64210000
+[Thread 1] Attempting to dereference NULL pointer:
+Abort Reached: Mitigated!
+ 
+------------------------------
+TTU_S4: Out Of Bounds Read
+
+ 
+------------------------------
+TTU_S5: Out Of Bounds Write
+
+ 
+============================================================
+ 
+------------------------------
+TTU_R1:
+
+ 
+------------------------------
+TTU_R2:
+
+ 
+------------------------------
+TTU_R3:
+
+ 
+------------------------------
+TTU_R4:
+SKIPPED
+ 
+------------------------------
+TTU_R5:
+
+ 
+============================================================
+ 

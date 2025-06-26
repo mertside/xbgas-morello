@@ -1,0 +1,131 @@
+============================================================
+Running ASU tests
+ 
+DATE: 
+Wed Jul 24 20:43:04 BST 2024
+ 
+UNAME: 
+FreeBSD morello102 14.0-CURRENT FreeBSD 14.0-CURRENT aarch64c 1400094 #0 releng/23.11-3b754ceed4ae: Wed Dec 13 08:54:18 UTC 2023     jenkins@focal:/local/scratch/jenkins/workspace/CheriBSD-pipeline_releng_23.11@2/cheribsd-morello-purecap-build/local/scratch/jenkins/workspace/CheriBSD-pipeline_releng_23.11@2/cheribsd/arm64.aarch64c/sys/GENERIC-MORELLO arm64
+ 
+SYSCTL: 
+hw.machine: arm64
+hw.model: Research Morello SoC r0p0
+hw.ncpu: 4
+hw.usermem: 32387575808
+hw.machine_arch: aarch64c
+============================================================
+ 
+------------------------------
+ASU_T1:
+Starting Test: Double Free
+Freeing memory(1)
+Freeing memory(2)
+Test Failed: Double Free
+ 
+------------------------------
+ASU_T2:
+ptr0: 0x4f3b5ec1a000
+ptr1: 0x4f3b5ec1a010
+Target: 0x4f3b5ec1a020
+
+ptr_x: 0x4f3b5ec1a010
+ptr_y: 0x4f3b5ec1a000
+ 
+------------------------------
+ASU_T3:
+
+ 
+------------------------------
+ASU_T4:
+d: 0x37d62081a010
+e: 0x37d62081a020
+
+g: 0x37d62081b000 -> 0x37d62081b050
+h: 0x37d62081a020
+h: victim's data
+ 
+------------------------------
+ASU_T5:
+Starting Test: Use-After-Free
+Printing characters of string before free:
+Hello World!Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+Printing characters of string after free:
+Hello World!Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+Test Failed: Use-After-Free
+ 
+============================================================
+ 
+------------------------------
+ASU_S1:
+Starting Test: Free not at start
+Printing characters of string before free:
+Hello World!Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+Printing characters of string after free:
+Hello World!Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+Test Failed: Free not at start
+ 
+------------------------------
+ASU_S2:
+
+ 
+------------------------------
+ASU_S3:
+
+ 
+------------------------------
+ASU_S4:
+Starting test: OOB Read
+Printing characters of public array
+public
+Printing characters of private array from public array
+secretpassword
+Test Failed: OOB Read
+ 
+------------------------------
+ASU_S5:
+Starting Test: OOB Write
+Updating value of first string with ?. 
+Original value: FIRST
+New value: ?????
+Updating value of second string with ? from first string pointer
+Original value: SECOND
+New value: ??????
+Test Failed: OOB Write
+ 
+============================================================
+ 
+------------------------------
+ASU_R1:
+Starting test: HeartBleed Example
+Responding to heartbeat request with 21 characters:
+HB MSGRSA KEY
+Test Failed: HeartBleed
+ 
+------------------------------
+ASU_R2:
+
+ 
+------------------------------
+ASU_R3:
+Starting test: UAF to Code Reuse
+Count: 1
+Count: 0
+Test Complete: UAF to Code Reuse
+ 
+------------------------------
+ASU_R4:
+Address of x: 0x6f2f63800880
+Value of x: 0
+ 
+------------------------------
+ASU_R5:
+Char is C
+Char is DEFAULT
+
+a: 0x19c615a1a000
+b: 0x19c615a1a000
+c: 0x19c615a1a000
+Test Failed: Switch fallthrough with metadata overwrite leading to Double Free
+ 
+============================================================
+ 
