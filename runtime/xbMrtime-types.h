@@ -1,15 +1,24 @@
 /*
- * _XBRTIME_TYPES_H_
+ * xbMrtime-types.h
  *
  * Copyright (C) 2017-2018 Tactical Computing Laboratories, LLC
+ * Copyright (C) 2024 Texas Tech University (Morello adaptation)
  * All Rights Reserved
  * contact@tactcomplabs.com
  *
  * This file is a part of the XBGAS-RUNTIME package.  For license
  * information, see the LICENSE file in the top level directory
  * of the distribution.
- *
  */
+
+/*!
+ * \file xbMrtime-types.h
+ * \brief Type definitions for xBGAS Runtime on CHERI-Morello
+ * 
+ * This header contains all type definitions and data structures used
+ * throughout the xBGAS runtime implementation.
+ */
+
 #ifndef _XBRTIME_TYPES_H_
 #define _XBRTIME_TYPES_H_
 
@@ -17,22 +26,37 @@
 extern "C" {
 #endif
 
+/* ========================================================================= */
+/*                           SYSTEM INCLUDES                                */
+/* ========================================================================= */
+
 #include <stdint.h>
 #include "xbMrtime-alloc.h"
 
+/* ========================================================================= */
+/*                           CONSTANTS                                      */
+/* ========================================================================= */
+
+/** \brief Maximum number of processing elements supported */
 #define __XBRTIME_MAX_PE 1024
 
-/*! \struct XBRTIME_PE_MAP
- *  \brief Defines the internal PE mapping
+/* ========================================================================= */
+/*                           TYPE DEFINITIONS                               */
+/* ========================================================================= */
+
+/*!
+ * \struct XBRTIME_PE_MAP
+ * \brief Processing Element (PE) mapping structure
  *
- * Defines the internal logical to physical PE mapping
- *
+ * This structure defines the mapping between logical and physical processing
+ * elements in the xBGAS runtime system. Each PE has a logical identifier,
+ * a physical identifier, and a base address for memory operations.
  */
-typedef struct{
-  int _LOGICAL;           /*! XBRTIME_PE_MAP: Logical node ID */
-  int _PHYSICAL;          /*! XBRTIME_PE_MAP: Physical node ID */
-  uint64_t _BASE;         /*! XBRTIME_PE_MAP: Base physical address */
-}XBRTIME_PE_MAP;
+typedef struct {
+    int _LOGICAL;           /*!< Logical PE identifier */
+    int _PHYSICAL;          /*!< Physical PE identifier */
+    uint64_t _BASE;         /*!< Base physical address for this PE */
+} XBRTIME_PE_MAP;
 
 /*! \struct XBRTIME_DATA
  *  \brief Defines the internal xbrtime configuration data
