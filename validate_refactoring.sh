@@ -247,14 +247,9 @@ echo "7. Documentation Check..."
 echo "========================="
 
 # Check documentation completeness
-docs=(
-    "README_NEW.md"
-    "REFACTORING_GUIDE.md"
-    "REFACTORING_SUMMARY.md"
-    "TESTING_GUIDE.md"
-)
+docs="README_NEW.md REFACTORING_GUIDE.md REFACTORING_SUMMARY.md TESTING_GUIDE.md"
 
-for doc in "${docs[@]}"; do
+for doc in $docs; do
     if [ -f "$doc" ]; then
         word_count=$(wc -w < "$doc")
         print_status "SUCCESS" "$doc ($word_count words)"
