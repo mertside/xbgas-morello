@@ -110,6 +110,10 @@ echo "================================"
 print_status "INFO" "Creating header test..."
 
 cat > temp_header_test.c << 'EOF'
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <string.h>
 #include "runtime/xbrtime_common.h"
 #include "runtime/xbrtime_api.h"
 #include "runtime/xbrtime_internal.h"
@@ -123,15 +127,42 @@ int main() {
 }
 EOF
 
-if cc -g -O2 -Wall -Iruntime -o temp_header_test.exe temp_header_test.c 2>/dev/null; then
+# Try compilation with verbose error reporting
+print_status "INFO" "Attempting header compilation..."
+if cc -g -O2 -Wall -Iruntime -o temp_header_test.exe temp_header_test.c 2>temp_compile_error.log; then
     print_status "SUCCESS" "All headers compile successfully"
     ./temp_header_test.exe
     rm -f temp_header_test.exe
 else
-    print_status "ERROR" "Header compilation failed"
+    print_status "ERROR" "Header compilation failed. Error details:"
+    echo "--- Compilation Errors ---"
+    cat temp_compile_error.log
+    echo "--- End Errors ---"
+    
+    # Try a simpler test with just basic headers
+    print_status "INFO" "Trying simplified header test..."
+    cat > temp_simple_test.c << 'EOF'
+#include <stdio.h>
+#include "runtime/xbMrtime-types.h"
+#include "runtime/xbMrtime-macros.h"
+
+int main() {
+    printf("Basic headers work!\n");
+    return 0;
+}
+EOF
+    
+    if cc -g -O2 -Wall -Iruntime -o temp_simple_test.exe temp_simple_test.c 2>/dev/null; then
+        print_status "SUCCESS" "Basic headers compile successfully"
+        ./temp_simple_test.exe
+        rm -f temp_simple_test.exe
+    else
+        print_status "ERROR" "Even basic headers fail to compile"
+    fi
+    rm -f temp_simple_test.c
 fi
 
-rm -f temp_header_test.c
+rm -f temp_header_test.c temp_compile_error.log
 
 echo ""
 
