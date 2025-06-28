@@ -66,7 +66,10 @@ REALWORLD_SOURCES = \
 
 # Refactored Test Examples
 REFACTORED_SOURCES = \
-	ttu_s4_oob_read_refactored.c
+	ttu_s4_oob_read_refactored.c \
+	ttu_s5_oob_write_refactored.c \
+	ttu_t1_double_free_refactored.c \
+	ttu_t5_use_after_free_refactored.c
 
 # All Sources
 ALL_SOURCES = $(SPATIAL_SOURCES) $(TEMPORAL_SOURCES) $(REALWORLD_SOURCES) $(REFACTORED_SOURCES)
