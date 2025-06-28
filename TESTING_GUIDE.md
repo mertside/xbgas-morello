@@ -204,7 +204,7 @@ make heap       # Heap manipulation tests
 cd /Users/MertSide/Developer/GitProjects/xBGAS/xbgas-morello/security/TTU
 
 # Build the refactored out-of-bounds read test
-cc -g -O2 -Wall -I../../runtime -o ttu_s4_oob_read_refactored.exe ttu_s4_oob_read_refactored.c
+cc -g -O2 -Wall -I../../runtime -lpthread -lm ../../runtime/xbMrtime_api_asm.s -o ttu_s4_oob_read_refactored.exe ttu_s4_oob_read_refactored.c
 
 # Run the test
 echo "Testing refactored OOB read (should be caught by CHERI)..."
