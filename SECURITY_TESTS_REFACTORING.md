@@ -115,15 +115,15 @@ make -f Makefile_improved ttu_t1_double_free_refactored.exe
 cd security/TTU
 
 # Test out-of-bounds write
-cc -g -O2 -Wall -I../../runtime -lpthread -lm ../../runtime/xbMrtime_api_asm.s -o oob_write_test.exe ttu_s5_oob_write_refactored.c
+cc -g -O2 -Wall -I../../runtime -lpthread -lm -o oob_write_test.exe ttu_s5_oob_write_refactored.c ../../runtime/xbMrtime_api_asm.s
 ./oob_write_test.exe
 
 # Test use-after-free
-cc -g -O2 -Wall -I../../runtime -lpthread -lm ../../runtime/xbMrtime_api_asm.s -o uaf_test.exe ttu_t5_use_after_free_refactored.c
+cc -g -O2 -Wall -I../../runtime -lpthread -lm -o uaf_test.exe ttu_t5_use_after_free_refactored.c ../../runtime/xbMrtime_api_asm.s
 ./uaf_test.exe
 
 # Test double-free
-cc -g -O2 -Wall -I../../runtime -lpthread -lm ../../runtime/xbMrtime_api_asm.s -o double_free_test.exe ttu_t1_double_free_refactored.c
+cc -g -O2 -Wall -I../../runtime -lpthread -lm -o double_free_test.exe ttu_t1_double_free_refactored.c ../../runtime/xbMrtime_api_asm.s
 ./double_free_test.exe
 ```
 
