@@ -28,7 +28,7 @@ This document provides immediate steps to test the refactored xBGAS-Morello code
 2. **Test one security example:**
    ```bash
    cd security/TTU
-   cc -g -O2 -Wall -I../../runtime -o test.exe ttu_s4_oob_read_refactored.c
+   cc -g -O2 -Wall -I../../runtime -lpthread -lm ../../runtime/xbMrtime_api_asm.s -o test.exe ttu_s4_oob_read_refactored.c
    ./test.exe
    cd ../..
    ```
