@@ -30,15 +30,15 @@ This document provides immediate steps to test the refactored xBGAS-Morello code
    cd security/TTU
    
    # Test out-of-bounds read (refactored)
-   cc -g -O2 -Wall -I../../runtime -lpthread -lm ../../runtime/xbMrtime_api_asm.s -o test_oob_read.exe ttu_s4_oob_read_refactored.c
+   cc -g -O2 -Wall -I../../runtime -lpthread -lm -o test_oob_read.exe ttu_s4_oob_read_refactored.c ../../runtime/xbMrtime_api_asm.s
    ./test_oob_read.exe
    
    # Test out-of-bounds write (refactored)  
-   cc -g -O2 -Wall -I../../runtime -lpthread -lm ../../runtime/xbMrtime_api_asm.s -o test_oob_write.exe ttu_s5_oob_write_refactored.c
+   cc -g -O2 -Wall -I../../runtime -lpthread -lm -o test_oob_write.exe ttu_s5_oob_write_refactored.c ../../runtime/xbMrtime_api_asm.s
    ./test_oob_write.exe
    
    # Test use-after-free (refactored)
-   cc -g -O2 -Wall -I../../runtime -lpthread -lm ../../runtime/xbMrtime_api_asm.s -o test_uaf.exe ttu_t5_use_after_free_refactored.c
+   cc -g -O2 -Wall -I../../runtime -lpthread -lm -o test_uaf.exe ttu_t5_use_after_free_refactored.c ../../runtime/xbMrtime_api_asm.s
    ./test_uaf.exe
    
    cd ../..
