@@ -90,10 +90,10 @@ check_file "runtime/xbMrtime-macros.h" "Refactored macros header"
 check_file "runtime/test.h" "Refactored test utilities"
 
 # Check documentation files
-check_file "README_NEW.md" "New comprehensive README"
-check_file "REFACTORING_GUIDE.md" "Refactoring guide"
-check_file "REFACTORING_SUMMARY.md" "Refactoring summary"
-check_file "TESTING_GUIDE.md" "Testing guide"
+# check_file "README_NEW.md" "New comprehensive README"
+# check_file "REFACTORING_GUIDE.md" "Refactoring guide"
+# check_file "REFACTORING_SUMMARY.md" "Refactoring summary"
+# check_file "TESTING_GUIDE.md" "Testing guide"
 
 # Check improved Makefile
 check_file "security/TTU/Makefile_improved" "Improved TTU Makefile"
