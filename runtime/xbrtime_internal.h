@@ -37,24 +37,10 @@ extern "C" {
 /*                           INTERNAL DATA STRUCTURES                       */
 /* ========================================================================= */
 
-/*!
- * \struct XBRTIME_DATA
- * \brief Main configuration data structure for the xBGAS runtime
- *
- * This structure holds all the configuration and state information
- * for the xBGAS runtime system, including PE mappings, memory
- * management data, and synchronization primitives.
+/*
+ * Note: XBRTIME_DATA is defined in xbMrtime-types.h
+ * This header includes the types header for the definition.
  */
-typedef struct {
-    uint64_t _ID;                    /*!< Current PE identifier */
-    uint64_t _MEMSIZE;              /*!< Available memory size */
-    int _NPES;                      /*!< Number of processing elements */
-    uint64_t _START_ADDR;           /*!< Start address for memory allocation */
-    uint64_t _SENSE;                /*!< Barrier sense variable */
-    volatile uint64_t *_BARRIER;    /*!< Barrier synchronization array */
-    XBRTIME_PE_MAP *_MAP;           /*!< PE mapping information */
-    XBRTIME_MEM_T *_MMAP;           /*!< Memory allocation tracking */
-} XBRTIME_DATA;
 
 /* ========================================================================= */
 /*                           GLOBAL RUNTIME STATE                           */
