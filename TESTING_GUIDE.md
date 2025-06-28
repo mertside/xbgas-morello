@@ -204,22 +204,22 @@ make heap       # Heap manipulation tests
 cd /Users/MertSide/Developer/GitProjects/xBGAS/xbgas-morello/security/TTU
 
 # Build and test the refactored out-of-bounds read test
-cc -g -O2 -Wall -I../../runtime -lpthread -lm ../../runtime/xbMrtime_api_asm.s -o ttu_s4_oob_read_refactored.exe ttu_s4_oob_read_refactored.c
+cc -g -O2 -Wall -I../../runtime -lpthread -lm -o ttu_s4_oob_read_refactored.exe ttu_s4_oob_read_refactored.c ../../runtime/xbMrtime_api_asm.s
 echo "Testing refactored OOB read (should be caught by CHERI)..."
 ./ttu_s4_oob_read_refactored.exe
 
 # Build and test the refactored out-of-bounds write test
-cc -g -O2 -Wall -I../../runtime -lpthread -lm ../../runtime/xbMrtime_api_asm.s -o ttu_s5_oob_write_refactored.exe ttu_s5_oob_write_refactored.c
+cc -g -O2 -Wall -I../../runtime -lpthread -lm -o ttu_s5_oob_write_refactored.exe ttu_s5_oob_write_refactored.c ../../runtime/xbMrtime_api_asm.s
 echo "Testing refactored OOB write (should be caught by CHERI)..."
 ./ttu_s5_oob_write_refactored.exe
 
 # Build and test the refactored use-after-free test
-cc -g -O2 -Wall -I../../runtime -lpthread -lm ../../runtime/xbMrtime_api_asm.s -o ttu_t5_use_after_free_refactored.exe ttu_t5_use_after_free_refactored.c
+cc -g -O2 -Wall -I../../runtime -lpthread -lm -o ttu_t5_use_after_free_refactored.exe ttu_t5_use_after_free_refactored.c ../../runtime/xbMrtime_api_asm.s
 echo "Testing refactored use-after-free (should be caught by CHERI)..."
 ./ttu_t5_use_after_free_refactored.exe
 
 # Build and test the refactored double-free test
-cc -g -O2 -Wall -I../../runtime -lpthread -lm ../../runtime/xbMrtime_api_asm.s -o ttu_t1_double_free_refactored.exe ttu_t1_double_free_refactored.c
+cc -g -O2 -Wall -I../../runtime -lpthread -lm -o ttu_t1_double_free_refactored.exe ttu_t1_double_free_refactored.c ../../runtime/xbMrtime_api_asm.s
 echo "Testing refactored double-free (should be caught by CHERI)..."
 ./ttu_t1_double_free_refactored.exe
 ```
