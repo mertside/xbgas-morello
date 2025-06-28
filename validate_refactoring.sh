@@ -129,6 +129,7 @@ EOF
 
 # Try compilation with verbose error reporting
 print_status "INFO" "Attempting header compilation..."
+set +e  # Temporarily disable exit on error for this test
 if cc -g -O2 -Wall -Iruntime -o temp_header_test.exe temp_header_test.c 2>temp_compile_error.log; then
     print_status "SUCCESS" "All headers compile successfully"
     ./temp_header_test.exe
@@ -161,6 +162,7 @@ EOF
     fi
     rm -f temp_simple_test.c
 fi
+set -e  # Re-enable exit on error
 
 rm -f temp_header_test.c temp_compile_error.log
 
