@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Quick Validation Script for xBGAS Refactored Code
 # This script provides a quick way to validate that the refactoring was successful
