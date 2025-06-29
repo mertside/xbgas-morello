@@ -222,6 +222,16 @@ echo "Testing refactored use-after-free (should be caught by CHERI)..."
 cc -g -O2 -Wall -I../../runtime -lpthread -lm -o ttu_t1_double_free_refactored.exe ttu_t1_double_free_refactored.c ../../runtime/xbMrtime_api_asm.s
 echo "Testing refactored double-free (should be caught by CHERI)..."
 ./ttu_t1_double_free_refactored.exe
+
+# Build and test the refactored function pointer UAF test
+cc -g -O2 -Wall -I../../runtime -lpthread -lm -o ttu_t6_uaf_function_pointer_refactored.exe ttu_t6_uaf_function_pointer_refactored_fixed.c ../../runtime/xbMrtime_api_asm.s
+echo "Testing refactored function pointer UAF (should be caught by CHERI)..."
+./ttu_t6_uaf_function_pointer_refactored.exe
+
+# Build and test the refactored memcpy UAF test
+cc -g -O2 -Wall -I../../runtime -lpthread -lm -o ttu_t7_uaf_memcpy_refactored.exe ttu_t7_uaf_memcpy_refactored_fixed.c ../../runtime/xbMrtime_api_asm.s
+echo "Testing refactored memcpy UAF (should be caught by CHERI)..."
+./ttu_t7_uaf_memcpy_refactored.exe
 ```
 
 **Expected Result:** Should demonstrate CHERI capability violation detection.
