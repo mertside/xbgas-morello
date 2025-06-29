@@ -235,7 +235,7 @@ static void write_heap_metadata(void* ptr, size_t offset, uint64_t value) {
 //=============================================================================
 
 /** @brief Execute the heap manipulation fake chunk test */
-static void* execute_heap_manipulation_test(void* arg) {
+static void execute_heap_manipulation_test(void* arg) {
     long tid = (long)arg;
     test_state.thread_id = tid;
     int recovery_signal = 0;
@@ -402,7 +402,7 @@ cleanup_and_exit:
     }
     
     printf("[Thread %ld] 🏁 %s test finished\n\n", tid, TEST_NAME);
-    return NULL;
+}
 }
 
 //=============================================================================
@@ -430,7 +430,7 @@ int main(void) {
     
     // Execute test on all available processing elements
     for (long i = 0; i < num_pes; i++) {
-        tpool_add_work(threads[i].thread_queue, execute_heap_manipulation_test, (void*)i);
+        tpool_add_work(threads[i].thread_queue, execute_heap_manipulation_test, (void*)(uintptr_t)i);
     }
     
     // Wait for all threads to complete
