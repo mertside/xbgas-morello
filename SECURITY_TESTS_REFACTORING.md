@@ -47,6 +47,50 @@ Following the pattern established with `ttu_s4_oob_read_refactored.c`, I have cr
   - Free operation statistics and analysis
   - Heap integrity validation
 
+### 5. Function Pointer Use-After-Free Test
+**File:** `ttu_t6_uaf_function_pointer_refactored.c` *(New)*
+- **Type:** Temporal Memory Safety Violation (Control Flow)
+- **Description:** Attempts to use a function pointer after its memory has been freed
+- **Key Features:**
+  - Function pointer allocation and initialization
+  - Memory reuse detection and analysis
+  - Control flow hijacking attempt
+  - CHERI capability revocation testing
+  - Function address validation and comparison
+
+### 6. memcpy Use-After-Free Test
+**File:** `ttu_t7_uaf_memcpy_refactored.c` *(New)*
+- **Type:** Temporal Memory Safety Violation (Data Corruption)
+- **Description:** Attempts to use memcpy with a freed pointer to corrupt new allocations
+- **Key Features:**
+  - Data corruption detection with canary values
+  - Memory reuse analysis and address comparison
+  - Integrity verification of secondary allocations
+  - memcpy operation safety validation
+  - Data corruption quantification
+
+### 7. Heap Manipulation - Fake Chunk Test
+**File:** `ttu_t2_hm_fake_chunk_malloc_refactored.c` *(New)*
+- **Type:** Heap Manipulation Vulnerability
+- **Description:** Attempts to inject fake chunks into heap metadata for controlled allocation
+- **Key Features:**
+  - tcache population and manipulation
+  - Use-after-free on heap metadata
+  - Fake chunk address injection
+  - Heap layout manipulation detection
+  - Arbitrary allocation attempt
+
+### 8. HeartBleed Vulnerability Test
+**File:** `ttu_r1_HeartBleed_refactored.c` *(New)*
+- **Type:** Real-World Exploit (Information Disclosure)
+- **Description:** Simulates the famous HeartBleed vulnerability (CVE-2014-0160)
+- **Key Features:**
+  - Authentic HeartBleed attack simulation
+  - Sensitive data exposure detection
+  - Buffer over-read with user-controlled length
+  - Information disclosure quantification
+  - Real-world exploit education
+
 ## Common Refactoring Improvements
 
 ### 1. Documentation Enhancement
@@ -90,7 +134,12 @@ REFACTORED_SOURCES = \
     ttu_s4_oob_read_refactored.c \
     ttu_s5_oob_write_refactored.c \
     ttu_t1_double_free_refactored.c \
-    ttu_t5_use_after_free_refactored.c
+    ttu_t5_use_after_free_refactored.c \
+    ttu_s3_null_ptr_dereference_refactored.c \
+    ttu_t6_uaf_function_pointer_refactored_fixed.c \
+    ttu_t7_uaf_memcpy_refactored_fixed.c \
+    ttu_t2_hm_fake_chunk_malloc_refactored.c \
+    ttu_r1_HeartBleed_refactored.c
 
 # Build refactored tests
 refactored: $(REFACTORED_SOURCES:.c=.exe)
@@ -106,6 +155,10 @@ make -f Makefile_improved ttu_s4_oob_read_refactored.exe
 make -f Makefile_improved ttu_s5_oob_write_refactored.exe
 make -f Makefile_improved ttu_t5_use_after_free_refactored.exe
 make -f Makefile_improved ttu_t1_double_free_refactored.exe
+make -f Makefile_improved ttu_t6_uaf_function_pointer_refactored_fixed.exe
+make -f Makefile_improved ttu_t7_uaf_memcpy_refactored_fixed.exe
+make -f Makefile_improved ttu_t2_hm_fake_chunk_malloc_refactored.exe
+make -f Makefile_improved ttu_r1_HeartBleed_refactored.exe
 ```
 
 ## Testing the Refactored Security Tests
@@ -125,6 +178,22 @@ cc -g -O2 -Wall -I../../runtime -lpthread -lm -o uaf_test.exe ttu_t5_use_after_f
 # Test double-free
 cc -g -O2 -Wall -I../../runtime -lpthread -lm -o double_free_test.exe ttu_t1_double_free_refactored.c ../../runtime/xbMrtime_api_asm.s
 ./double_free_test.exe
+
+# Test function pointer UAF
+cc -g -O2 -Wall -I../../runtime -lpthread -lm -o func_ptr_test.exe ttu_t6_uaf_function_pointer_refactored_fixed.c ../../runtime/xbMrtime_api_asm.s
+./func_ptr_test.exe
+
+# Test memcpy UAF
+cc -g -O2 -Wall -I../../runtime -lpthread -lm -o memcpy_uaf_test.exe ttu_t7_uaf_memcpy_refactored_fixed.c ../../runtime/xbMrtime_api_asm.s
+./memcpy_uaf_test.exe
+
+# Test heap manipulation
+cc -g -O2 -Wall -I../../runtime -lpthread -lm -o heap_manip_test.exe ttu_t2_hm_fake_chunk_malloc_refactored.c ../../runtime/xbMrtime_api_asm.s
+./heap_manip_test.exe
+
+# Test HeartBleed
+cc -g -O2 -Wall -I../../runtime -lpthread -lm -o heartbleed_test.exe ttu_r1_HeartBleed_refactored.c ../../runtime/xbMrtime_api_asm.s
+./heartbleed_test.exe
 ```
 
 ## Expected Results
@@ -179,6 +248,12 @@ Each test provides detailed output including:
 
 ## Conclusion
 
-The refactored security tests significantly improve the quality and usefulness of the xBGAS-Morello security evaluation suite. They provide comprehensive analysis of CHERI-Morello's memory safety capabilities while maintaining high code quality standards and detailed documentation.
+The refactored security tests significantly improve the quality and usefulness of the xBGAS-Morello security evaluation suite. With **8 comprehensive refactored tests** covering spatial safety, temporal safety, heap manipulation, and real-world exploits, the suite now provides:
 
-These tests serve as both security evaluation tools and educational examples of how CHERI capabilities protect against common memory safety vulnerabilities.
+- **Complete vulnerability coverage** across all major memory safety categories
+- **Educational value** with detailed explanations of each vulnerability type
+- **CHERI-specific analysis** demonstrating capability system protection
+- **Production-quality code** with comprehensive documentation and error handling
+- **Real-world relevance** including famous exploits like HeartBleed
+
+These tests serve as both security evaluation tools and educational examples of how CHERI capabilities protect against common memory safety vulnerabilities, making them invaluable for researchers, developers, and security professionals working with memory-safe systems.
