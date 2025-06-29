@@ -74,7 +74,14 @@ REFACTORED_SOURCES = \
 	ttu_t6_uaf_function_pointer_refactored_fixed.c \
 	ttu_t7_uaf_memcpy_refactored_fixed.c \
 	ttu_t2_hm_fake_chunk_malloc_refactored.c \
-	ttu_r1_HeartBleed_refactored.c
+	ttu_r1_HeartBleed_refactored.c \
+	ttu_r2_dop_refactored.c \
+	ttu_s1_free_not_at_start_refactored.c \
+	ttu_r3_uaf_to_code_reuse_refactored.c \
+	ttu_r4_illegal_ptr_deref_refactored.c \
+	ttu_r5_df_switch_refactored.c \
+	ttu_s2_free_not_on_heap_refactored.c \
+	ttu_t4_hm_p_and_c_chunk_refactored.c
 
 # All Sources
 ALL_SOURCES = $(SPATIAL_SOURCES) $(TEMPORAL_SOURCES) $(REALWORLD_SOURCES) $(REFACTORED_SOURCES)
