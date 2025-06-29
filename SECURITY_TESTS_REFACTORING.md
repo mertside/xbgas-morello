@@ -47,6 +47,61 @@ Following the pattern established with `ttu_s4_oob_read_refactored.c`, I have cr
   - Free operation statistics and analysis
   - Heap integrity validation
 
+### 5. Function Pointer Use-After-Free Test
+**File:** `ttu_t6_uaf_function_pointer_refactored.c` *(New)*
+- **Type:** Temporal Memory Safety Violation (Control Flow)
+- **Description:** Attempts to use function pointers after their memory has been freed
+- **Key Features:**
+  - Function pointer allocation and initialization
+  - Control flow hijacking attempts via UAF
+  - Signal handling for capability violations
+  - Function identity verification and analysis
+  - Temporal capability validation
+
+### 6. memcpy Use-After-Free Test
+**File:** `ttu_t7_uaf_memcpy_refactored.c` *(New)*
+- **Type:** Temporal Memory Safety Violation (Data Corruption)
+- **Description:** Attempts to use memcpy with freed pointers to corrupt memory
+- **Key Features:**
+  - Memory copy operations with freed pointers
+  - Data corruption detection and analysis
+  - Memory layout visualization
+  - Integrity verification for target buffers
+  - Temporal safety violation tracking
+
+### 7. Heap Manipulation - Fake Chunk Malloc Test
+**File:** `ttu_t2_hm_fake_chunk_malloc_refactored.c` *(New)*
+- **Type:** Heap Manipulation Attack
+- **Description:** Attempts to inject fake chunks into heap metadata for arbitrary allocation
+- **Key Features:**
+  - Tcache population and manipulation
+  - Use-after-free exploitation of heap metadata
+  - Fake chunk address injection
+  - Heap layout analysis and validation
+  - Arbitrary memory allocation attempts
+
+### 8. Heap Manipulation - House of Spirit Test
+**File:** `ttu_t3_hm_house_of_spirit_refactored.c` *(New)*
+- **Type:** Heap Manipulation Attack
+- **Description:** Crafts fake chunks in non-heap memory and attempts to get them allocated
+- **Key Features:**
+  - Fake chunk creation with proper metadata
+  - Pointer substitution attacks
+  - Non-heap memory free() attempts
+  - Memory layout comparison (heap vs stack/data)
+  - Arbitrary allocation prevention validation
+
+### 9. Illegal Pointer Dereference Test
+**File:** `ttu_r4_illegal_ptr_deref_refactored.c` *(New)*
+- **Type:** Real-world Exploit (Invalid Memory Access)
+- **Description:** Tests various illegal pointer dereference scenarios including NULL and invalid addresses
+- **Key Features:**
+  - Large allocation failure handling
+  - NULL pointer dereference testing
+  - Invalid memory address access attempts
+  - Allocation boundary condition testing
+  - Capability validation for pointer operations
+
 ## Common Refactoring Improvements
 
 ### 1. Documentation Enhancement
@@ -90,7 +145,13 @@ REFACTORED_SOURCES = \
     ttu_s4_oob_read_refactored.c \
     ttu_s5_oob_write_refactored.c \
     ttu_t1_double_free_refactored.c \
-    ttu_t5_use_after_free_refactored.c
+    ttu_t5_use_after_free_refactored.c \
+    ttu_s3_null_ptr_dereference_refactored.c \
+    ttu_t6_uaf_function_pointer_refactored.c \
+    ttu_t7_uaf_memcpy_refactored.c \
+    ttu_t2_hm_fake_chunk_malloc_refactored.c \
+    ttu_t3_hm_house_of_spirit_refactored.c \
+    ttu_r4_illegal_ptr_deref_refactored.c
 
 # Build refactored tests
 refactored: $(REFACTORED_SOURCES:.c=.exe)
@@ -106,6 +167,12 @@ make -f Makefile_improved ttu_s4_oob_read_refactored.exe
 make -f Makefile_improved ttu_s5_oob_write_refactored.exe
 make -f Makefile_improved ttu_t5_use_after_free_refactored.exe
 make -f Makefile_improved ttu_t1_double_free_refactored.exe
+make -f Makefile_improved ttu_s3_null_ptr_dereference_refactored.exe
+make -f Makefile_improved ttu_t6_uaf_function_pointer_refactored.exe
+make -f Makefile_improved ttu_t7_uaf_memcpy_refactored.exe
+make -f Makefile_improved ttu_t2_hm_fake_chunk_malloc_refactored.exe
+make -f Makefile_improved ttu_t3_hm_house_of_spirit_refactored.exe
+make -f Makefile_improved ttu_r4_illegal_ptr_deref_refactored.exe
 ```
 
 ## Testing the Refactored Security Tests
@@ -125,6 +192,26 @@ cc -g -O2 -Wall -I../../runtime -lpthread -lm -o uaf_test.exe ttu_t5_use_after_f
 # Test double-free
 cc -g -O2 -Wall -I../../runtime -lpthread -lm -o double_free_test.exe ttu_t1_double_free_refactored.c ../../runtime/xbMrtime_api_asm.s
 ./double_free_test.exe
+
+# Test function pointer UAF
+cc -g -O2 -Wall -I../../runtime -lpthread -lm -o func_ptr_uaf_test.exe ttu_t6_uaf_function_pointer_refactored.c ../../runtime/xbMrtime_api_asm.s
+./func_ptr_uaf_test.exe
+
+# Test memcpy UAF
+cc -g -O2 -Wall -I../../runtime -lpthread -lm -o memcpy_uaf_test.exe ttu_t7_uaf_memcpy_refactored.c ../../runtime/xbMrtime_api_asm.s
+./memcpy_uaf_test.exe
+
+# Test heap manipulation - fake chunk
+cc -g -O2 -Wall -I../../runtime -lpthread -lm -o heap_fake_chunk_test.exe ttu_t2_hm_fake_chunk_malloc_refactored.c ../../runtime/xbMrtime_api_asm.s
+./heap_fake_chunk_test.exe
+
+# Test heap manipulation - house of spirit
+cc -g -O2 -Wall -I../../runtime -lpthread -lm -o house_of_spirit_test.exe ttu_t3_hm_house_of_spirit_refactored.c ../../runtime/xbMrtime_api_asm.s
+./house_of_spirit_test.exe
+
+# Test illegal pointer dereference
+cc -g -O2 -Wall -I../../runtime -lpthread -lm -o illegal_ptr_test.exe ttu_r4_illegal_ptr_deref_refactored.c ../../runtime/xbMrtime_api_asm.s
+./illegal_ptr_test.exe
 ```
 
 ## Expected Results
@@ -166,10 +253,11 @@ Each test provides detailed output including:
 ## Future Extensions
 
 ### Additional Tests to Refactor
-1. **Null Pointer Dereference** (`ttu_s3_null_ptr_dereference.c`)
-2. **Function Pointer UAF** (`ttu_t6_uaf_function_pointer.c`)
-3. **Heap Manipulation Tests** (`ttu_t2_hm_*`, `ttu_t3_hm_*`, `ttu_t4_hm_*`)
-4. **Real-world Exploits** (`ttu_r1_HeartBleed.c`, `ttu_r2_dop.c`)
+1. **Free Not at Start** (`ttu_s1_free_not_at_start.c`)
+2. **Free Not on Heap** (`ttu_s2_free_not_on_heap.c`)
+3. **Parent and Child Chunk** (`ttu_t4_hm_p_and_c_chunk.c`)
+4. **Real-world Exploits** (`ttu_r1_HeartBleed.c`, `ttu_r2_dop.c`, `ttu_r3_uaf_to_code_reuse.c`, `ttu_r5_df_switch.c`)
+5. **Baseline Tests** (`ttu_s4_baseline_oob_read.c`, `ttu_s5_baseline_oob_write.c`)
 
 ### Enhancement Opportunities
 1. **Performance benchmarking** integration
