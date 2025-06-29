@@ -484,7 +484,7 @@ int main(void) {
     printf("Expected on CHERI: Capability violations prevent heap metadata corruption\n\n");
     
     // Initialize xBGAS runtime
-    if (xbrtime_init() != XBRTIME_SUCCESS) {
+    if (xbrtime_init() != 0) {
         fprintf(stderr, "ERROR: Failed to initialize xBGAS runtime\n");
         return EXIT_FAILURE;
     }
