@@ -209,7 +209,7 @@ static void analyze_function_pointer_state(const char* phase, function_ptr_t* fp
 //=============================================================================
 
 /** @brief Execute the use-after-free function pointer vulnerability test */
-static void* execute_uaf_function_pointer_test(void* arg) {
+static void execute_uaf_function_pointer_test(void* arg) {
     long tid = (long)arg;
     test_state.thread_id = tid;
     int recovery_signal = 0;
@@ -236,11 +236,10 @@ static void* execute_uaf_function_pointer_test(void* arg) {
     test_state.current_phase = PHASE_ALLOCATE;
     printf("[Thread %ld] 📋 Phase %d: Allocate function pointer memory\n", tid, PHASE_ALLOCATE);
     
-    test_state.original_func_ptr = (function_ptr_t*)malloc(FUNC_PTR_SIZE);
-    if (!test_state.original_func_ptr) {
-        printf("[Thread %ld] ❌ Failed to allocate memory for function pointer\n", tid);
-        return NULL;
-    }
+    test_state.original_func_ptr = (function_ptr_t*)malloc(FUNC_PTR_SIZE);        if (!test_state.original_func_ptr) {
+            printf("[Thread %ld] ❌ Failed to allocate memory for function pointer\n", tid);
+            return;
+        }
     test_state.allocated_memory[test_state.allocation_count++] = test_state.original_func_ptr;
     
     analyze_function_pointer_state("after allocation", test_state.original_func_ptr);
@@ -270,11 +269,10 @@ static void* execute_uaf_function_pointer_test(void* arg) {
     printf("[Thread %ld] 📋 Phase %d: Reallocate memory\n", tid, PHASE_REALLOCATE);
     
     // Allocate new memory that might reuse the same address
-    test_state.target_func_ptr = (function_ptr_t*)malloc(FUNC_PTR_SIZE);
-    if (!test_state.target_func_ptr) {
-        printf("[Thread %ld] ❌ Failed to reallocate memory\n", tid);
-        return NULL;
-    }
+    test_state.target_func_ptr = (function_ptr_t*)malloc(FUNC_PTR_SIZE);        if (!test_state.target_func_ptr) {
+            printf("[Thread %ld] ❌ Failed to reallocate memory\n", tid);
+            return;
+        }
     test_state.allocated_memory[test_state.allocation_count++] = test_state.target_func_ptr;
     
     analyze_pointer("New allocation", (void*)test_state.target_func_ptr);
@@ -329,7 +327,7 @@ cleanup_and_exit:
     }
     
     printf("[Thread %ld] 🏁 %s test finished\n\n", tid, TEST_NAME);
-    return NULL;
+}
 }
 
 //=============================================================================
@@ -357,7 +355,7 @@ int main(void) {
     
     // Execute test on all available processing elements
     for (long i = 0; i < num_pes; i++) {
-        tpool_add_work(threads[i].thread_queue, execute_uaf_function_pointer_test, (void*)i);
+        tpool_add_work(threads[i].thread_queue, execute_uaf_function_pointer_test, (void*)(uintptr_t)i);
     }
     
     // Wait for all threads to complete
