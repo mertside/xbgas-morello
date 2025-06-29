@@ -5,7 +5,8 @@
  * REFACTORED FOR xBGAS-Morello TTU Security Evaluation
  * =====================================================
  * 
- * VULNERABILITY TYPE: Use-After-Free (UAF) -> Code Reuse Attack
+ *         printf("  [Thread %ld] PROTECTION: Signal %ld caught during UAF attempt\n", 
+               thread_id, (long)signal_caught);LNERABILITY TYPE: Use-After-Free (UAF) -> Code Reuse Attack
  * SECURITY IMPACT: Critical - Code execution, privilege escalation
  * CHERI MITIGATION: Capability temporal safety, bounds checking
  * 
@@ -248,8 +249,9 @@ static test_result_t phase5_exploit_attempt(long thread_id,
 /**
  * @brief Main UAF to code reuse vulnerability test function
  */
-static void* uaf_code_reuse_vulnerability_test(void* arg) {
-    long thread_id = (long)arg;
+static void uaf_code_reuse_vulnerability_test(void* arg) {
+    long thread_id = *(long*)arg;
+    free(arg);  // Clean up the allocated thread ID
     test_result_t result = TEST_RESULT_UNKNOWN;
     
     printf("[Thread %ld] ==> Starting UAF to Code Reuse Attack Test\n", thread_id);
@@ -310,16 +312,16 @@ static void* uaf_code_reuse_vulnerability_test(void* arg) {
             break;
     }
     
-    return NULL;
+    // No return value for void function
 }
 
 /**
  * @brief Print comprehensive test results and analysis
  */
 static void print_test_analysis(void) {
-    printf("\n" "="*80 "\n");
+    printf("\n================================================================================\n");
     printf("UAF TO CODE REUSE ATTACK - TEST ANALYSIS\n");
-    printf("="*80 "\n");
+    printf("================================================================================\n");
     
     printf("Test Statistics:\n");
     printf("  Total tests executed:     %d\n", global_stats.total_tests);
@@ -355,7 +357,7 @@ static void print_test_analysis(void) {
     printf("  • Illustrates CHERI's capability-based protection mechanisms\n");
     printf("  • Highlights importance of temporal memory safety\n");
     
-    printf("="*80 "\n");
+    printf("================================================================================\n");
 }
 
 /**
@@ -368,7 +370,7 @@ int main(void) {
     printf("Expected on CHERI: Capability violations prevent exploitation\n\n");
     
     // Initialize xBGAS runtime
-    if (xbrtime_init() != XBRTIME_SUCCESS) {
+    if (xbrtime_init() != 0) {
         fprintf(stderr, "ERROR: Failed to initialize xBGAS runtime\n");
         return EXIT_FAILURE;
     }
@@ -377,10 +379,12 @@ int main(void) {
     printf("Executing UAF to code reuse tests on %d processing elements\n\n", num_pes);
     
     // Execute tests across all PEs
-    for (long i = 0; i < num_pes; i++) {
+    for (int i = 0; i < num_pes; i++) {
+        long *thread_id = malloc(sizeof(long));
+        *thread_id = i;
         tpool_add_work(threads[i].thread_queue, 
                       uaf_code_reuse_vulnerability_test, 
-                      (void*)i);
+                      thread_id);
     }
     
     // Wait for all tests to complete
