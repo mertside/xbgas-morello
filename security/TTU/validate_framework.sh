@@ -42,17 +42,6 @@ check_source_file() {
     fi
 }
 
-check_source_file() {
-    source_file="$1"
-    if [ -f "$source_file" ]; then
-        printf "${GREEN}✓ Found: $source_file${NC}\n"
-        return 0
-    else
-        printf "${RED}✗ Missing: $source_file${NC}\n"
-        return 1
-    fi
-}
-
 # Check each refactored source file
 missing_files=0
 
@@ -70,7 +59,7 @@ check_source_file "ttu_t3_hm_house_of_spirit_refactored.c" || missing_files=$((m
 check_source_file "ttu_t4_hm_p_and_c_chunk_refactored.c" || missing_files=$((missing_files + 1))
 check_source_file "ttu_t5_use_after_free_refactored.c" || missing_files=$((missing_files + 1))
 check_source_file "ttu_t6_uaf_function_pointer_refactored_fixed.c" || missing_files=$((missing_files + 1))
-check_source_file "ttu_t7_uaf_memcpy_refactored_fixed.c" || missing_files=$((missing_files + 1))
+check_source_file "ttu_t7_uaf_memcpy_refactored.c" || missing_files=$((missing_files + 1))
 
 # Real-world vulnerability tests
 check_source_file "ttu_r1_HeartBleed_refactored.c" || missing_files=$((missing_files + 1))
