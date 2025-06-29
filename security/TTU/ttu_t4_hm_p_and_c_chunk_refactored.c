@@ -418,9 +418,9 @@ static void* heap_manipulation_vulnerability_test(void* arg) {
  * @brief Print comprehensive test results and analysis
  */
 static void print_test_analysis(void) {
-    printf("\n" "="*80 "\n");
+    printf("\n================================================================================\n");
     printf("HEAP MANIPULATION (PARENT/CHILD CHUNK) - TEST ANALYSIS\n");
-    printf("="*80 "\n");
+    printf("================================================================================\n");
     
     printf("Test Statistics:\n");
     printf("  Total tests executed:         %d\n", global_stats.total_tests);
@@ -471,7 +471,7 @@ static void print_test_analysis(void) {
     printf("  • Illustrates importance of heap integrity protection\n");
     printf("  • Highlights CHERI's spatial memory safety advantages\n");
     
-    printf("="*80 "\n");
+    printf("================================================================================\n");
 }
 
 /**
