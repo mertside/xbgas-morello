@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 #
 # Automated Test Runner for xBGAS TTU Memory Safety Tests
