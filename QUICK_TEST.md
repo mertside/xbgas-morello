@@ -41,6 +41,22 @@ This document provides immediate steps to test the refactored xBGAS-Morello code
    cc -g -O2 -Wall -I../../runtime -lpthread -lm -o test_uaf.exe ttu_t5_use_after_free_refactored.c ../../runtime/xbMrtime_api_asm.s
    ./test_uaf.exe
    
+   # Test function pointer use-after-free (refactored)
+   cc -g -O2 -Wall -I../../runtime -lpthread -lm -o test_func_ptr.exe ttu_t6_uaf_function_pointer_refactored_fixed.c ../../runtime/xbMrtime_api_asm.s
+   ./test_func_ptr.exe
+   
+   # Test memcpy use-after-free (refactored)
+   cc -g -O2 -Wall -I../../runtime -lpthread -lm -o test_memcpy_uaf.exe ttu_t7_uaf_memcpy_refactored_fixed.c ../../runtime/xbMrtime_api_asm.s
+   ./test_memcpy_uaf.exe
+   
+   # Test heap manipulation (refactored)
+   cc -g -O2 -Wall -I../../runtime -lpthread -lm -o test_heap_manip.exe ttu_t2_hm_fake_chunk_malloc_refactored.c ../../runtime/xbMrtime_api_asm.s
+   ./test_heap_manip.exe
+   
+   # Test HeartBleed vulnerability (refactored)
+   cc -g -O2 -Wall -I../../runtime -lpthread -lm -o test_heartbleed.exe ttu_r1_HeartBleed_refactored.c ../../runtime/xbMrtime_api_asm.s
+   ./test_heartbleed.exe
+   
    cd ../..
    ```
 
