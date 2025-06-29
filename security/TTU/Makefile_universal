@@ -54,8 +54,16 @@ check-environment:
 	@echo "=== Environment Check ==="
 	@echo "Compiler: $(CC)"
 	@echo "Working directory: `pwd`"
+	@echo "Expected directory: security/TTU"
+	@if echo `pwd` | grep -q "security/TTU/obj"; then \
+		echo "⚠ WARNING: You are in the obj subdirectory!"; \
+		echo "Please run from the parent directory:"; \
+		echo "  cd .. && make -f Makefile_universal check-environment"; \
+	fi
 	@echo "Available refactored files:"
 	@ls -1 *_refactored*.c 2>/dev/null | wc -l | sed 's/^/  Found: /' || echo "  Found: 0"
+	@echo "Contents of current directory:"
+	@ls -1 *.c 2>/dev/null | head -3 | sed 's/^/  /' || echo "  No .c files found"
 	@echo "Runtime directory: `test -d ../../runtime && echo EXISTS || echo MISSING`"
 	@mkdir -p $(REPORTDIR)
 
@@ -226,17 +234,35 @@ compile-test:
 	fi
 
 # ============================================================================
-#                              MAINTENANCE
+#                           DIRECTORY HELPERS
 # ============================================================================
 
-clean:
-	@echo "Cleaning generated files..."
-	@rm -f *.exe *.o *.core
-	@rm -rf $(REPORTDIR)
+check-directory:
+	@echo "=== Directory Check ==="
+	@echo "Current directory: `pwd`"
+	@if echo `pwd` | grep -q "security/TTU/obj"; then \
+		echo "✗ ERROR: You are in the obj subdirectory!"; \
+		echo "Solution: cd .. && make -f Makefile_universal [target]"; \
+		echo ""; \
+		echo "Files in parent directory:"; \
+		ls -1 ../*_refactored*.c 2>/dev/null | wc -l | sed 's/^/  Found: /' || echo "  Found: 0"; \
+		exit 1; \
+	elif echo `pwd` | grep -q "security/TTU$$"; then \
+		echo "✓ Correct directory"; \
+		echo "Files found:"; \
+		ls -1 *_refactored*.c 2>/dev/null | wc -l | sed 's/^/  /' || echo "  0"; \
+	else \
+		echo "⚠ Unknown directory - expected to be in security/TTU"; \
+	fi
 
-clean-logs:
-	@rm -rf $(REPORTDIR)
-	@mkdir -p $(REPORTDIR)
+list-files:
+	@echo "=== Available Files ==="
+	@echo "In current directory (`pwd`):"
+	@ls -1 *.c 2>/dev/null | grep refactored | sed 's/^/  /' || echo "  No refactored files"
+	@if test -d "../"; then \
+		echo "In parent directory:"; \
+		ls -1 ../*.c 2>/dev/null | grep refactored | sed 's|.*/||' | sed 's/^/  /' || echo "  No refactored files"; \
+	fi
 
 # ============================================================================
 #                                 HELP
@@ -254,6 +280,10 @@ config:
 help:
 	@echo "TTU Memory Safety Tests - Universal Build System"
 	@echo "==============================================="
+	@echo "DIRECTORY NAVIGATION:"
+	@echo "  check-directory  - Check if you're in the right directory"
+	@echo "  list-files       - List available source files"
+	@echo ""
 	@echo "ENVIRONMENT:"
 	@echo "  check-environment - Show build environment"
 	@echo "  config           - Show build configuration"
@@ -279,12 +309,18 @@ help:
 	@echo "  clean      - Remove generated files"
 	@echo "  clean-logs - Clean only log files"
 	@echo "  help       - Show this help"
+	@echo ""
+	@echo "TROUBLESHOOTING:"
+	@echo "  If you see 'missing source files', you may be in wrong directory."
+	@echo "  Run: make -f Makefile_universal check-directory"
 
 # Mark all targets as PHONY that don't create files
 .PHONY: all check-environment spatial temporal realworld heap
+.PHONY: check-directory list-files
 .PHONY: run-spatial run-temporal run-realworld run-all
 .PHONY: check-files compile-test clean clean-logs config help
 .PHONY: ttu_s1_free_not_at_start_refactored ttu_t1_double_free_refactored
 .PHONY: ttu_r1_HeartBleed_refactored
+.PHONY: check-directory list-files
 
 # EOF
