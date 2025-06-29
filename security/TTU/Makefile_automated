@@ -1,0 +1,535 @@
+#
+# Automated Makefile for xBGAS Memory Safety Tests (Texas Tech University)
+#
+# Copyright (C) 2024 Texas Tech University
+# All Rights Reserved
+#
+# This Makefile provides comprehensive automation for building and testing
+# the refactored memory safety test suite for the xBGAS runtime on CHERI-Morello.
+#
+
+# ============================================================================
+#                              CONFIGURATION
+# ============================================================================
+
+# Compiler Configuration
+CC = cc
+# Alternative compiler for CHERI-Morello
+# CC = /usr/local64/llvm-morello/bin/clang
+
+# Compiler Flags
+CFLAGS = -g -O2 -Wall -Wextra -std=c99
+LDFLAGS = -lpthread -lm
+
+# Include Paths
+INCLUDES = -I../../runtime
+
+# Assembly Sources
+ASM_SOURCES = ../../runtime/xbMrtime_api_asm.s
+
+# Complete Compilation Command
+COMPILE = $(CC) $(CFLAGS) $(INCLUDES) $(LDFLAGS) $(ASM_SOURCES)
+
+# Output Directory
+OUTDIR = ./bin
+OBJDIR = ./obj
+REPORTDIR = ./reports
+
+# Colors for output
+RED = \033[0;31m
+GREEN = \033[0;32m
+YELLOW = \033[0;33m
+BLUE = \033[0;34m
+PURPLE = \033[0;35m
+CYAN = \033[0;36m
+NC = \033[0m # No Color
+
+# ============================================================================
+#                         REFACTORED TEST SOURCES
+# ============================================================================
+
+# Refactored Spatial Safety Tests
+REFACTORED_SPATIAL_SOURCES = \
+	ttu_s1_free_not_at_start_refactored.c \
+	ttu_s2_free_not_on_heap_refactored.c \
+	ttu_s3_null_ptr_dereference_refactored.c \
+	ttu_s4_oob_read_refactored.c \
+	ttu_s5_oob_write_refactored.c
+
+# Refactored Temporal Safety Tests  
+REFACTORED_TEMPORAL_SOURCES = \
+	ttu_t1_double_free_refactored.c \
+	ttu_t2_hm_fake_chunk_malloc_refactored.c \
+	ttu_t3_hm_house_of_spirit_refactored.c \
+	ttu_t4_hm_p_and_c_chunk_refactored.c \
+	ttu_t5_use_after_free_refactored.c \
+	ttu_t6_uaf_function_pointer_refactored_fixed.c \
+	ttu_t7_uaf_memcpy_refactored_fixed.c
+
+# Refactored Real-world Vulnerability Tests
+REFACTORED_REALWORLD_SOURCES = \
+	ttu_r1_HeartBleed_refactored.c \
+	ttu_r2_dop_refactored.c \
+	ttu_r3_uaf_to_code_reuse_refactored.c \
+	ttu_r4_illegal_ptr_deref_refactored.c \
+	ttu_r5_df_switch_refactored.c
+
+# Heap Manipulation Subset (part of temporal tests)
+REFACTORED_HEAP_SOURCES = \
+	ttu_t2_hm_fake_chunk_malloc_refactored.c \
+	ttu_t3_hm_house_of_spirit_refactored.c \
+	ttu_t4_hm_p_and_c_chunk_refactored.c
+
+# All Refactored Sources
+ALL_REFACTORED_SOURCES = $(REFACTORED_SPATIAL_SOURCES) $(REFACTORED_TEMPORAL_SOURCES) $(REFACTORED_REALWORLD_SOURCES)
+
+# ============================================================================
+#                              TARGET DEFINITIONS  
+# ============================================================================
+
+# Refactored Executables by Category
+REFACTORED_SPATIAL_TARGETS = $(REFACTORED_SPATIAL_SOURCES:.c=.exe)
+REFACTORED_TEMPORAL_TARGETS = $(REFACTORED_TEMPORAL_SOURCES:.c=.exe)
+REFACTORED_REALWORLD_TARGETS = $(REFACTORED_REALWORLD_SOURCES:.c=.exe)
+REFACTORED_HEAP_TARGETS = $(REFACTORED_HEAP_SOURCES:.c=.exe)
+
+# All Refactored Executables
+ALL_REFACTORED_TARGETS = $(ALL_REFACTORED_SOURCES:.c=.exe)
+
+# Original test sources (for backward compatibility)
+ORIGINAL_SPATIAL_SOURCES = \
+	ttu_s1_free_not_at_start.c \
+	ttu_s2_free_not_on_heap.c \
+	ttu_s3_null_ptr_dereference.c \
+	ttu_s4_oob_read.c \
+	ttu_s5_oob_write.c
+
+ORIGINAL_TEMPORAL_SOURCES = \
+	ttu_t1_double_free.c \
+	ttu_t2_hm_fake_chunk_malloc.c \
+	ttu_t3_hm_house_of_spirit.c \
+	ttu_t4_hm_p_and_c_chunk.c \
+	ttu_t5_use_after_free.c \
+	ttu_t6_uaf_function_pointer.c \
+	ttu_t7_uaf_memcpy.c
+
+ORIGINAL_REALWORLD_SOURCES = \
+	ttu_r1_HeartBleed.c \
+	ttu_r2_dop.c \
+	ttu_r3_uaf_to_code_reuse.c \
+	ttu_r4_illegal_ptr_deref.c \
+	ttu_r5_df_switch.c
+
+ORIGINAL_SPATIAL_TARGETS = $(ORIGINAL_SPATIAL_SOURCES:.c=.exe)
+ORIGINAL_TEMPORAL_TARGETS = $(ORIGINAL_TEMPORAL_SOURCES:.c=.exe)
+ORIGINAL_REALWORLD_TARGETS = $(ORIGINAL_REALWORLD_SOURCES:.c=.exe)
+
+# All targets
+ALL_SOURCES = $(ALL_REFACTORED_SOURCES) $(ORIGINAL_SPATIAL_SOURCES) $(ORIGINAL_TEMPORAL_SOURCES) $(ORIGINAL_REALWORLD_SOURCES)
+ALL_TARGETS = $(ALL_SOURCES:.c=.exe)
+
+# ============================================================================
+#                              BUILD RULES
+# ============================================================================
+
+# Default target - build all refactored tests
+.PHONY: all
+all: directories $(ALL_REFACTORED_TARGETS)
+	@echo "$(GREEN)===================================================="
+	@echo "All Refactored TTU Memory Safety Tests Built Successfully!"
+	@echo "====================================================$(NC)"
+	@echo "$(CYAN)Spatial Safety Tests: $(words $(REFACTORED_SPATIAL_TARGETS)) files$(NC)"
+	@echo "$(YELLOW)Temporal Safety Tests: $(words $(REFACTORED_TEMPORAL_TARGETS)) files$(NC)"
+	@echo "$(PURPLE)Real-world Tests: $(words $(REFACTORED_REALWORLD_TARGETS)) files$(NC)"
+	@echo "$(BLUE)Heap Manipulation Tests: $(words $(REFACTORED_HEAP_TARGETS)) files$(NC)"
+	@echo "$(GREEN)===================================================="
+
+# Create necessary directories
+.PHONY: directories
+directories:
+	@mkdir -p $(OUTDIR) $(OBJDIR) $(REPORTDIR)
+
+# ============================================================================
+#                        REFACTORED TEST BUILD TARGETS
+# ============================================================================
+
+# Build refactored spatial safety tests
+.PHONY: spatial-refactored
+spatial-refactored: directories $(REFACTORED_SPATIAL_TARGETS)
+	@echo "$(CYAN)Refactored spatial safety tests built successfully!$(NC)"
+	@echo "$(CYAN)Built: $(REFACTORED_SPATIAL_TARGETS)$(NC)"
+
+# Build refactored temporal safety tests
+.PHONY: temporal-refactored
+temporal-refactored: directories $(REFACTORED_TEMPORAL_TARGETS)
+	@echo "$(YELLOW)Refactored temporal safety tests built successfully!$(NC)"
+	@echo "$(YELLOW)Built: $(REFACTORED_TEMPORAL_TARGETS)$(NC)"
+
+# Build refactored real-world vulnerability tests
+.PHONY: realworld-refactored
+realworld-refactored: directories $(REFACTORED_REALWORLD_TARGETS)
+	@echo "$(PURPLE)Refactored real-world vulnerability tests built successfully!$(NC)"
+	@echo "$(PURPLE)Built: $(REFACTORED_REALWORLD_TARGETS)$(NC)"
+
+# Build refactored heap manipulation tests
+.PHONY: heap-refactored
+heap-refactored: directories $(REFACTORED_HEAP_TARGETS)
+	@echo "$(BLUE)Refactored heap manipulation tests built successfully!$(NC)"
+	@echo "$(BLUE)Built: $(REFACTORED_HEAP_TARGETS)$(NC)"
+
+# ============================================================================
+#                           COMPILATION RULES
+# ============================================================================
+
+# Generic rule for building executables
+%.exe: %.c
+	@echo "$(GREEN)Building $@...$(NC)"
+	@$(COMPILE) -o $@ $< 2>&1 | tee $(REPORTDIR)/build_$*.log || { \
+		echo "$(RED)Build failed for $@$(NC)"; \
+		echo "$(RED)Check $(REPORTDIR)/build_$*.log for details$(NC)"; \
+		exit 1; \
+	}
+	@echo "$(GREEN)Successfully built $@$(NC)"
+
+# ============================================================================
+#                        AUTOMATED TEST EXECUTION
+# ============================================================================
+
+# Run refactored spatial safety tests with detailed reporting
+.PHONY: test-spatial-refactored
+test-spatial-refactored: spatial-refactored
+	@echo "$(CYAN)===================================================="
+	@echo "Running Refactored Spatial Safety Tests"
+	@echo "====================================================$(NC)"
+	@> $(REPORTDIR)/spatial_test_results.txt
+	@echo "Spatial Safety Test Results - $(shell date)" >> $(REPORTDIR)/spatial_test_results.txt
+	@echo "=================================================" >> $(REPORTDIR)/spatial_test_results.txt
+	@total=0; passed=0; failed=0; \
+	for test in $(REFACTORED_SPATIAL_TARGETS); do \
+		echo "$(CYAN)Running $$test...$(NC)"; \
+		total=$$((total + 1)); \
+		if timeout 30s ./$$test > $(REPORTDIR)/$$test.output 2>&1; then \
+			echo "$(GREEN)✓ $$test: PASSED$(NC)"; \
+			echo "PASSED: $$test" >> $(REPORTDIR)/spatial_test_results.txt; \
+			passed=$$((passed + 1)); \
+		else \
+			echo "$(RED)✗ $$test: FAILED$(NC)"; \
+			echo "FAILED: $$test" >> $(REPORTDIR)/spatial_test_results.txt; \
+			failed=$$((failed + 1)); \
+		fi; \
+		echo "----------------------------------------------------"; \
+	done; \
+	echo ""; \
+	echo "Summary: $$passed/$$total tests passed, $$failed failed" >> $(REPORTDIR)/spatial_test_results.txt; \
+	echo "$(CYAN)Spatial Tests Summary: $$passed/$$total passed, $$failed failed$(NC)"
+
+# Run refactored temporal safety tests with detailed reporting
+.PHONY: test-temporal-refactored
+test-temporal-refactored: temporal-refactored
+	@echo "$(YELLOW)===================================================="
+	@echo "Running Refactored Temporal Safety Tests"
+	@echo "====================================================$(NC)"
+	@> $(REPORTDIR)/temporal_test_results.txt
+	@echo "Temporal Safety Test Results - $(shell date)" >> $(REPORTDIR)/temporal_test_results.txt
+	@echo "=================================================" >> $(REPORTDIR)/temporal_test_results.txt
+	@total=0; passed=0; failed=0; \
+	for test in $(REFACTORED_TEMPORAL_TARGETS); do \
+		echo "$(YELLOW)Running $$test...$(NC)"; \
+		total=$$((total + 1)); \
+		if timeout 30s ./$$test > $(REPORTDIR)/$$test.output 2>&1; then \
+			echo "$(GREEN)✓ $$test: PASSED$(NC)"; \
+			echo "PASSED: $$test" >> $(REPORTDIR)/temporal_test_results.txt; \
+			passed=$$((passed + 1)); \
+		else \
+			echo "$(RED)✗ $$test: FAILED$(NC)"; \
+			echo "FAILED: $$test" >> $(REPORTDIR)/temporal_test_results.txt; \
+			failed=$$((failed + 1)); \
+		fi; \
+		echo "----------------------------------------------------"; \
+	done; \
+	echo ""; \
+	echo "Summary: $$passed/$$total tests passed, $$failed failed" >> $(REPORTDIR)/temporal_test_results.txt; \
+	echo "$(YELLOW)Temporal Tests Summary: $$passed/$$total passed, $$failed failed$(NC)"
+
+# Run refactored real-world vulnerability tests with detailed reporting
+.PHONY: test-realworld-refactored
+test-realworld-refactored: realworld-refactored
+	@echo "$(PURPLE)===================================================="
+	@echo "Running Refactored Real-world Vulnerability Tests"
+	@echo "====================================================$(NC)"
+	@> $(REPORTDIR)/realworld_test_results.txt
+	@echo "Real-world Vulnerability Test Results - $(shell date)" >> $(REPORTDIR)/realworld_test_results.txt
+	@echo "=================================================" >> $(REPORTDIR)/realworld_test_results.txt
+	@total=0; passed=0; failed=0; \
+	for test in $(REFACTORED_REALWORLD_TARGETS); do \
+		echo "$(PURPLE)Running $$test...$(NC)"; \
+		total=$$((total + 1)); \
+		if timeout 30s ./$$test > $(REPORTDIR)/$$test.output 2>&1; then \
+			echo "$(GREEN)✓ $$test: PASSED$(NC)"; \
+			echo "PASSED: $$test" >> $(REPORTDIR)/realworld_test_results.txt; \
+			passed=$$((passed + 1)); \
+		else \
+			echo "$(RED)✗ $$test: FAILED$(NC)"; \
+			echo "FAILED: $$test" >> $(REPORTDIR)/realworld_test_results.txt; \
+			failed=$$((failed + 1)); \
+		fi; \
+		echo "----------------------------------------------------"; \
+	done; \
+	echo ""; \
+	echo "Summary: $$passed/$$total tests passed, $$failed failed" >> $(REPORTDIR)/realworld_test_results.txt; \
+	echo "$(PURPLE)Real-world Tests Summary: $$passed/$$total passed, $$failed failed$(NC)"
+
+# Run refactored heap manipulation tests with detailed reporting
+.PHONY: test-heap-refactored
+test-heap-refactored: heap-refactored
+	@echo "$(BLUE)===================================================="
+	@echo "Running Refactored Heap Manipulation Tests"
+	@echo "====================================================$(NC)"
+	@> $(REPORTDIR)/heap_test_results.txt
+	@echo "Heap Manipulation Test Results - $(shell date)" >> $(REPORTDIR)/heap_test_results.txt
+	@echo "=================================================" >> $(REPORTDIR)/heap_test_results.txt
+	@total=0; passed=0; failed=0; \
+	for test in $(REFACTORED_HEAP_TARGETS); do \
+		echo "$(BLUE)Running $$test...$(NC)"; \
+		total=$$((total + 1)); \
+		if timeout 30s ./$$test > $(REPORTDIR)/$$test.output 2>&1; then \
+			echo "$(GREEN)✓ $$test: PASSED$(NC)"; \
+			echo "PASSED: $$test" >> $(REPORTDIR)/heap_test_results.txt; \
+			passed=$$((passed + 1)); \
+		else \
+			echo "$(RED)✗ $$test: FAILED$(NC)"; \
+			echo "FAILED: $$test" >> $(REPORTDIR)/heap_test_results.txt; \
+			failed=$$((failed + 1)); \
+		fi; \
+		echo "----------------------------------------------------"; \
+	done; \
+	echo ""; \
+	echo "Summary: $$passed/$$total tests passed, $$failed failed" >> $(REPORTDIR)/heap_test_results.txt; \
+	echo "$(BLUE)Heap Tests Summary: $$passed/$$total passed, $$failed failed$(NC)"
+
+# ============================================================================
+#                          COMPREHENSIVE TEST AUTOMATION
+# ============================================================================
+
+# Run all refactored tests with comprehensive reporting
+.PHONY: test-all-refactored
+test-all-refactored: all
+	@echo "$(GREEN)========================================================="
+	@echo "Comprehensive Refactored TTU Memory Safety Test Suite"
+	@echo "=========================================================$(NC)"
+	@echo "$(GREEN)Starting comprehensive test execution...$(NC)"
+	@echo ""
+	@$(MAKE) test-spatial-refactored
+	@echo ""
+	@$(MAKE) test-temporal-refactored
+	@echo ""
+	@$(MAKE) test-realworld-refactored
+	@echo ""
+	@$(MAKE) test-heap-refactored
+	@echo ""
+	@$(MAKE) generate-comprehensive-report
+
+# Generate comprehensive test report
+.PHONY: generate-comprehensive-report
+generate-comprehensive-report:
+	@echo "$(GREEN)===================================================="
+	@echo "Generating Comprehensive Test Report"
+	@echo "====================================================$(NC)"
+	@> $(REPORTDIR)/comprehensive_test_report.txt
+	@echo "xBGAS TTU Memory Safety Tests - Comprehensive Report" >> $(REPORTDIR)/comprehensive_test_report.txt
+	@echo "Generated: $(shell date)" >> $(REPORTDIR)/comprehensive_test_report.txt
+	@echo "=========================================================" >> $(REPORTDIR)/comprehensive_test_report.txt
+	@echo "" >> $(REPORTDIR)/comprehensive_test_report.txt
+	@if [ -f $(REPORTDIR)/spatial_test_results.txt ]; then \
+		echo "SPATIAL SAFETY TESTS:" >> $(REPORTDIR)/comprehensive_test_report.txt; \
+		tail -n 1 $(REPORTDIR)/spatial_test_results.txt >> $(REPORTDIR)/comprehensive_test_report.txt; \
+		echo "" >> $(REPORTDIR)/comprehensive_test_report.txt; \
+	fi
+	@if [ -f $(REPORTDIR)/temporal_test_results.txt ]; then \
+		echo "TEMPORAL SAFETY TESTS:" >> $(REPORTDIR)/comprehensive_test_report.txt; \
+		tail -n 1 $(REPORTDIR)/temporal_test_results.txt >> $(REPORTDIR)/comprehensive_test_report.txt; \
+		echo "" >> $(REPORTDIR)/comprehensive_test_report.txt; \
+	fi
+	@if [ -f $(REPORTDIR)/realworld_test_results.txt ]; then \
+		echo "REAL-WORLD VULNERABILITY TESTS:" >> $(REPORTDIR)/comprehensive_test_report.txt; \
+		tail -n 1 $(REPORTDIR)/realworld_test_results.txt >> $(REPORTDIR)/comprehensive_test_report.txt; \
+		echo "" >> $(REPORTDIR)/comprehensive_test_report.txt; \
+	fi
+	@if [ -f $(REPORTDIR)/heap_test_results.txt ]; then \
+		echo "HEAP MANIPULATION TESTS:" >> $(REPORTDIR)/comprehensive_test_report.txt; \
+		tail -n 1 $(REPORTDIR)/heap_test_results.txt >> $(REPORTDIR)/comprehensive_test_report.txt; \
+		echo "" >> $(REPORTDIR)/comprehensive_test_report.txt; \
+	fi
+	@echo "=========================================================" >> $(REPORTDIR)/comprehensive_test_report.txt
+	@echo "$(GREEN)Comprehensive report generated: $(REPORTDIR)/comprehensive_test_report.txt$(NC)"
+	@echo "$(GREEN)Individual test outputs available in: $(REPORTDIR)/$(NC)"
+
+# ============================================================================
+#                             ANALYSIS AND VALIDATION
+# ============================================================================
+
+# Validate all refactored tests compile successfully
+.PHONY: validate-build
+validate-build: directories
+	@echo "$(BLUE)===================================================="
+	@echo "Validating Build Process for All Refactored Tests"
+	@echo "====================================================$(NC)"
+	@> $(REPORTDIR)/build_validation.txt
+	@echo "Build Validation Report - $(shell date)" >> $(REPORTDIR)/build_validation.txt
+	@echo "=================================================" >> $(REPORTDIR)/build_validation.txt
+	@total=0; success=0; failed=0; \
+	for source in $(ALL_REFACTORED_SOURCES); do \
+		echo "$(BLUE)Validating build for $$source...$(NC)"; \
+		total=$$((total + 1)); \
+		target=$${source%.c}.exe; \
+		if $(COMPILE) -o $$target $$source > $(REPORTDIR)/build_$$target.log 2>&1; then \
+			echo "$(GREEN)✓ Build successful: $$source$(NC)"; \
+			echo "SUCCESS: $$source" >> $(REPORTDIR)/build_validation.txt; \
+			success=$$((success + 1)); \
+			rm -f $$target; \
+		else \
+			echo "$(RED)✗ Build failed: $$source$(NC)"; \
+			echo "FAILED: $$source" >> $(REPORTDIR)/build_validation.txt; \
+			failed=$$((failed + 1)); \
+		fi; \
+	done; \
+	echo ""; \
+	echo "Build Summary: $$success/$$total successful, $$failed failed" >> $(REPORTDIR)/build_validation.txt; \
+	echo "$(BLUE)Build Validation Summary: $$success/$$total successful, $$failed failed$(NC)"
+
+# Quick syntax check for all refactored sources
+.PHONY: syntax-check
+syntax-check:
+	@echo "$(PURPLE)===================================================="
+	@echo "Performing Syntax Check on Refactored Sources"
+	@echo "====================================================$(NC)"
+	@total=0; success=0; failed=0; \
+	for source in $(ALL_REFACTORED_SOURCES); do \
+		echo "$(PURPLE)Checking syntax: $$source$(NC)"; \
+		total=$$((total + 1)); \
+		if $(CC) $(CFLAGS) $(INCLUDES) -fsyntax-only $$source 2>/dev/null; then \
+			echo "$(GREEN)✓ Syntax OK: $$source$(NC)"; \
+			success=$$((success + 1)); \
+		else \
+			echo "$(RED)✗ Syntax errors: $$source$(NC)"; \
+			failed=$$((failed + 1)); \
+		fi; \
+	done; \
+	echo "$(PURPLE)Syntax Check Summary: $$success/$$total passed, $$failed failed$(NC)"
+
+# ============================================================================
+#                              ORIGINAL TEST COMPATIBILITY
+# ============================================================================
+
+# Build original tests (for comparison/backward compatibility)
+.PHONY: original-spatial
+original-spatial: directories $(ORIGINAL_SPATIAL_TARGETS)
+	@echo "Original spatial safety tests built successfully!"
+
+.PHONY: original-temporal
+original-temporal: directories $(ORIGINAL_TEMPORAL_TARGETS)
+	@echo "Original temporal safety tests built successfully!"
+
+.PHONY: original-realworld
+original-realworld: directories $(ORIGINAL_REALWORLD_TARGETS)
+	@echo "Original real-world vulnerability tests built successfully!"
+
+.PHONY: all-original
+all-original: original-spatial original-temporal original-realworld
+	@echo "All original tests built successfully!"
+
+# ============================================================================
+#                              MAINTENANCE TARGETS
+# ============================================================================
+
+# Clean all generated files
+.PHONY: clean
+clean:
+	@echo "$(YELLOW)Cleaning up generated files...$(NC)"
+	@rm -f *.exe *.o *.core
+	@rm -rf $(OUTDIR) $(OBJDIR) $(REPORTDIR)
+	@echo "$(GREEN)Clean completed.$(NC)"
+
+# Clean and rebuild everything
+.PHONY: rebuild
+rebuild: clean all
+
+# Clean reports only
+.PHONY: clean-reports
+clean-reports:
+	@echo "$(YELLOW)Cleaning test reports...$(NC)"
+	@rm -rf $(REPORTDIR)
+	@mkdir -p $(REPORTDIR)
+	@echo "$(GREEN)Reports cleaned.$(NC)"
+
+# ============================================================================
+#                              HELP AND DOCUMENTATION
+# ============================================================================
+
+.PHONY: help
+help:
+	@echo "$(GREEN)========================================================="
+	@echo "xBGAS TTU Memory Safety Tests - Automated Build System"
+	@echo "=========================================================$(NC)"
+	@echo "$(CYAN)REFACTORED TEST BUILD TARGETS:$(NC)"
+	@echo "  all                    - Build all refactored tests (default)"
+	@echo "  spatial-refactored     - Build refactored spatial safety tests"
+	@echo "  temporal-refactored    - Build refactored temporal safety tests"
+	@echo "  realworld-refactored   - Build refactored real-world tests"
+	@echo "  heap-refactored        - Build refactored heap manipulation tests"
+	@echo ""
+	@echo "$(YELLOW)AUTOMATED TEST EXECUTION:$(NC)"
+	@echo "  test-all-refactored    - Run all refactored tests with reporting"
+	@echo "  test-spatial-refactored - Run refactored spatial tests with reports"
+	@echo "  test-temporal-refactored - Run refactored temporal tests with reports"
+	@echo "  test-realworld-refactored - Run refactored real-world tests with reports"
+	@echo "  test-heap-refactored   - Run refactored heap tests with reports"
+	@echo ""
+	@echo "$(PURPLE)VALIDATION AND ANALYSIS:$(NC)"
+	@echo "  validate-build         - Validate all refactored tests compile"
+	@echo "  syntax-check           - Check syntax of all refactored sources"
+	@echo "  generate-comprehensive-report - Generate detailed test report"
+	@echo ""
+	@echo "$(BLUE)ORIGINAL TEST COMPATIBILITY:$(NC)"
+	@echo "  all-original           - Build all original tests"
+	@echo "  original-spatial       - Build original spatial tests"
+	@echo "  original-temporal      - Build original temporal tests"
+	@echo "  original-realworld     - Build original real-world tests"
+	@echo ""
+	@echo "$(RED)MAINTENANCE:$(NC)"
+	@echo "  clean                  - Remove all generated files"
+	@echo "  clean-reports          - Clean only test reports"
+	@echo "  rebuild                - Clean and rebuild everything"
+	@echo ""
+	@echo "$(GREEN)CONFIGURATION:$(NC)"
+	@echo "  CC=$(CC)"
+	@echo "  CFLAGS=$(CFLAGS)"
+	@echo "  LDFLAGS=$(LDFLAGS)"
+	@echo "  Reports Directory: $(REPORTDIR)"
+	@echo "========================================================="
+
+# ============================================================================
+#                              SHORTCUTS AND ALIASES
+# ============================================================================
+
+# Quick shortcuts
+.PHONY: build test validate
+build: all
+test: test-all-refactored
+validate: validate-build
+
+# Category shortcuts
+.PHONY: spatial temporal realworld heap
+spatial: spatial-refactored
+temporal: temporal-refactored
+realworld: realworld-refactored
+heap: heap-refactored
+
+# Test shortcuts
+.PHONY: test-spatial test-temporal test-realworld test-heap
+test-spatial: test-spatial-refactored
+test-temporal: test-temporal-refactored
+test-realworld: test-realworld-refactored
+test-heap: test-heap-refactored
+
+# EOF
