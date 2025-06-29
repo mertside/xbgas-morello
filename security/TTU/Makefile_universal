@@ -321,6 +321,5 @@ help:
 .PHONY: check-files compile-test clean clean-logs config help
 .PHONY: ttu_s1_free_not_at_start_refactored ttu_t1_double_free_refactored
 .PHONY: ttu_r1_HeartBleed_refactored
-.PHONY: check-directory list-files
 
 # EOF
