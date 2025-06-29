@@ -5,7 +5,11 @@
  * REFACTORED FOR xBGAS-Morello TTU Security Evaluation
  * =====================================================
  * 
- *         printf("  [Thread %ld] PROTECTION: Signal %ld caught during UAF attempt\n", 
+ *         /**
+ * @brief Main UAF to code reuse vulnerability test function
+ */
+static void* uaf_code_reuse_vulnerability_test(void* arg) {
+    long thread_id = (long)arg;f("  [Thread %ld] PROTECTION: Signal %ld caught during UAF attempt\n", 
                thread_id, (long)signal_caught);LNERABILITY TYPE: Use-After-Free (UAF) -> Code Reuse Attack
  * SECURITY IMPACT: Critical - Code execution, privilege escalation
  * CHERI MITIGATION: Capability temporal safety, bounds checking
@@ -239,8 +243,8 @@ static test_result_t phase5_exploit_attempt(long thread_id,
     } else {
         // Signal was caught
         result = TEST_RESULT_EXCEPTION;
-        printf("  [Thread %ld] CHERI PROTECTION: Signal %d caught during UAF attempt\n", 
-               thread_id, signal_caught);
+        printf("  [Thread %ld] CHERI PROTECTION: Signal %ld caught during UAF attempt\n", 
+               thread_id, (long)signal_caught);
     }
     
     return result;
@@ -379,12 +383,10 @@ int main(void) {
     printf("Executing UAF to code reuse tests on %d processing elements\n\n", num_pes);
     
     // Execute tests across all PEs
-    for (int i = 0; i < num_pes; i++) {
-        long *thread_id = malloc(sizeof(long));
-        *thread_id = i;
+    for (long i = 0; i < num_pes; i++) {
         tpool_add_work(threads[i].thread_queue, 
                       uaf_code_reuse_vulnerability_test, 
-                      thread_id);
+                      (void*)i);
     }
     
     // Wait for all tests to complete
