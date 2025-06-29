@@ -12,8 +12,19 @@ CC = cc
 CFLAGS = -g -O2 -Wall -Wextra -std=c99
 LDFLAGS = -lpthread -lm
 INCLUDES = -I../../runtime
+
+# Assembly Sources (optional - only if available)
 ASM_SOURCES = ../../runtime/xbMrtime_api_asm.s
+
+# Check if assembly source exists
+ASM_EXISTS = $(shell test -f $(ASM_SOURCES) && echo "yes" || echo "no")
+
+# Complete Compilation Command
+ifeq ($(ASM_EXISTS),yes)
 COMPILE = $(CC) $(CFLAGS) $(INCLUDES) $(LDFLAGS) $(ASM_SOURCES)
+else
+COMPILE = $(CC) $(CFLAGS) $(INCLUDES) $(LDFLAGS)
+endif
 
 # Output Directories
 OUTDIR = ./bin
@@ -78,7 +89,7 @@ ALL_REFACTORED_TARGETS = $(ALL_REFACTORED_SOURCES:.c=.exe)
 
 # Default target - build all refactored tests
 .PHONY: all
-all: directories $(ALL_REFACTORED_TARGETS)
+all: directories show-config $(ALL_REFACTORED_TARGETS)
 	@echo "===================================================="
 	@echo "All Refactored TTU Memory Safety Tests Built Successfully!"
 	@echo "===================================================="
@@ -86,6 +97,20 @@ all: directories $(ALL_REFACTORED_TARGETS)
 	@echo "Temporal Safety Tests: $(words $(REFACTORED_TEMPORAL_TARGETS)) files"
 	@echo "Real-world Tests: $(words $(REFACTORED_REALWORLD_TARGETS)) files"
 	@echo "Heap Manipulation Tests: $(words $(REFACTORED_HEAP_TARGETS)) files"
+	@echo "===================================================="
+
+# Show configuration for debugging
+.PHONY: show-config
+show-config:
+	@echo "===================================================="
+	@echo "Build Configuration:"
+	@echo "===================================================="
+	@echo "CC = $(CC)"
+	@echo "CFLAGS = $(CFLAGS)"
+	@echo "LDFLAGS = $(LDFLAGS)"
+	@echo "INCLUDES = $(INCLUDES)"
+	@echo "ASM_EXISTS = $(ASM_EXISTS)"
+	@echo "COMPILE = $(COMPILE)"
 	@echo "===================================================="
 
 # Create necessary directories
@@ -122,10 +147,17 @@ heap-refactored: directories $(REFACTORED_HEAP_TARGETS)
 # ============================================================================
 
 # Generic rule for building executables
-%.exe: %.c
+%.exe: %.c directories
 	@echo "Building $@..."
-	@$(COMPILE) -o $@ $< > $(REPORTDIR)/build_$*.log 2>&1 || { echo "Build failed for $@"; exit 1; }
-	@echo "Successfully built $@"
+	@mkdir -p $(REPORTDIR)
+	@if $(COMPILE) -o $@ $< > $(REPORTDIR)/build_$*.log 2>&1; then \
+		echo "Successfully built $@"; \
+	else \
+		echo "Build failed for $@"; \
+		echo "Check $(REPORTDIR)/build_$*.log for details"; \
+		cat $(REPORTDIR)/build_$*.log; \
+		exit 1; \
+	fi
 
 # ============================================================================
 #                        SIMPLE TEST EXECUTION
