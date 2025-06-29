@@ -12,15 +12,15 @@ chmod +x cleanup_obsolete.sh
 
 ### 2. Build All Tests
 ```bash
-make -f Makefile_working all
+make -f Makefile_bsd all
 ```
 
 ### 3. Build by Category
 ```bash
-make -f Makefile_working spatial    # Spatial safety tests
-make -f Makefile_working temporal   # Temporal safety tests
-make -f Makefile_working realworld  # Real-world vulnerabilities
-make -f Makefile_working heap       # Heap manipulation tests
+make -f Makefile_bsd spatial    # Spatial safety tests
+make -f Makefile_bsd temporal   # Temporal safety tests
+make -f Makefile_bsd realworld  # Real-world vulnerabilities
+make -f Makefile_bsd heap       # Heap manipulation tests
 ```
 
 ## Documentation
@@ -38,7 +38,7 @@ make -f Makefile_working heap       # Heap manipulation tests
 
 ## Files
 
-- `Makefile_working` - Canonical build system (BSD make compatible)
+- `Makefile_bsd` - Canonical build system (BSD make compatible)
 - `*_refactored.c` - Modernized, documented test files
 - `cleanup_obsolete.sh` - Removes obsolete build files
 
