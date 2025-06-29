@@ -1,10 +1,47 @@
 # Security Tests Refactoring Summary
 
-This document summarizes the refactored memory security evaluation tests for the xBGAS-Morello project.
+This document summarizes the refactored memory security evaluation tests for the xBGAS-Morello project, including comprehensive automation for building and testing.
 
 ## Overview
 
 Following the pattern established with `ttu_s4_oob_read_refactored.c`, I have created high-quality refactored versions of key memory security tests. These refactored tests provide enhanced documentation, improved structure, and detailed CHERI capability analysis.
+
+## Automated Testing Framework
+
+The refactored tests are supported by a comprehensive automated testing framework:
+
+### Core Automation Files
+- **`Makefile_automated`** - Advanced Makefile with category-based builds and automated testing
+- **`run_tests.sh`** - Comprehensive test automation script with reporting
+- **`validate_framework.sh`** - Quick validation script for framework setup
+- **`AUTOMATED_TESTING_GUIDE.md`** - Detailed documentation for the automation framework
+
+### Quick Start - Automated Testing
+```bash
+# Validate framework setup
+chmod +x validate_framework.sh run_tests.sh
+./validate_framework.sh
+
+# Build all refactored tests
+./run_tests.sh build-all
+
+# Run comprehensive test suite
+./run_tests.sh test-all
+
+# Test specific categories
+./run_tests.sh test-spatial      # Spatial safety tests
+./run_tests.sh test-temporal     # Temporal safety tests
+./run_tests.sh test-realworld    # Real-world vulnerability tests
+./run_tests.sh test-heap         # Heap manipulation tests
+```
+
+### Features
+- **Category-based Testing**: Tests organized by spatial, temporal, real-world, and heap manipulation
+- **Automated Reporting**: Comprehensive test results with timestamps and success rates
+- **Build Validation**: Automatic compilation checking and syntax validation
+- **Timeout Protection**: Prevents hanging tests with configurable timeouts
+- **Colored Output**: Visual feedback with color-coded status messages
+- **Comprehensive Logging**: Detailed logs and individual test outputs
 
 ## Refactored Tests
 
@@ -393,6 +430,95 @@ Each test provides detailed output including:
 2. **Automated result analysis** and reporting
 3. **Test configuration** through command-line parameters
 4. **Cross-platform compatibility** testing
+
+## Comprehensive Test Automation
+
+### Automation Framework
+The refactored test suite is supported by a comprehensive automation framework that provides:
+
+#### 1. Advanced Makefile (`Makefile_automated`)
+- **Category-based builds**: Spatial, temporal, real-world, and heap manipulation tests
+- **Automated test execution**: Run tests with comprehensive reporting
+- **Build validation**: Verify all tests compile successfully
+- **Color-coded output**: Visual feedback for build and test status
+- **Detailed logging**: Individual build logs and test outputs
+
+#### 2. Test Automation Script (`run_tests.sh`)
+- **Comprehensive test runner**: Execute all tests with timeout protection
+- **Category-specific testing**: Run tests by vulnerability type
+- **Detailed reporting**: Generate comprehensive test reports
+- **Error handling**: Graceful handling of test failures
+- **Performance metrics**: Execution time and success rate analysis
+
+#### 3. Validation Tools
+- **Framework validation** (`validate_framework.sh`): Quick setup verification
+- **Syntax checking**: Validate all source files
+- **Build verification**: Ensure all tests compile correctly
+- **Dependency checking**: Verify required files are present
+
+### Quick Usage Examples
+
+#### Build All Refactored Tests
+```bash
+# Using Makefile
+make -f Makefile_automated all
+
+# Using automation script
+./run_tests.sh build-all
+```
+
+#### Run Comprehensive Test Suite
+```bash
+# Run all tests with reporting
+./run_tests.sh test-all
+
+# Run specific categories
+./run_tests.sh test-spatial      # Spatial safety tests
+./run_tests.sh test-temporal     # Temporal safety tests
+./run_tests.sh test-realworld    # Real-world vulnerabilities
+./run_tests.sh test-heap         # Heap manipulation tests
+```
+
+#### Validate Framework
+```bash
+# Quick validation
+./validate_framework.sh
+
+# Comprehensive validation
+./run_tests.sh validate-all
+```
+
+### Automation Features
+- **Timeout Protection**: Prevents hanging tests (configurable timeout)
+- **Comprehensive Logging**: Detailed execution logs and test outputs
+- **Category Organization**: Tests grouped by vulnerability type
+- **Visual Feedback**: Color-coded status messages
+- **Report Generation**: Automated test result summaries
+- **Error Recovery**: Graceful handling of compilation and execution failures
+
+### Test Execution Metrics
+- **Total Refactored Tests**: 17 (all categories)
+- **Spatial Safety Tests**: 5 tests
+- **Temporal Safety Tests**: 7 tests
+- **Real-world Vulnerability Tests**: 5 tests
+- **Heap Manipulation Subset**: 3 tests
+- **Typical Execution Time**: < 2 minutes for full suite
+- **Individual Test Timeout**: 30 seconds (configurable)
+
+### Report Directory Structure
+```
+./reports/
+├── comprehensive_test_report.txt    # Overall summary
+├── spatial_test_results.txt         # Spatial test results
+├── temporal_test_results.txt        # Temporal test results
+├── realworld_test_results.txt       # Real-world test results
+├── heap_test_results.txt           # Heap test results
+├── automation.log                  # Execution log
+├── build_*.log                     # Build logs
+└── *_output.txt                    # Individual test outputs
+```
+
+See `AUTOMATED_TESTING_GUIDE.md` for complete documentation of the automation framework.
 
 ## Conclusion
 
