@@ -350,9 +350,9 @@ static void* double_free_switch_vulnerability_test(void* arg) {
  * @brief Print comprehensive test results and analysis
  */
 static void print_test_analysis(void) {
-    printf("\n" "="*80 "\n");
+    printf("\n================================================================================\n");
     printf("DOUBLE-FREE SWITCH FALLTHROUGH - TEST ANALYSIS\n");
-    printf("="*80 "\n");
+    printf("================================================================================\n");
     
     printf("Test Statistics:\n");
     printf("  Total tests executed:         %d\n", global_stats.total_tests);
@@ -403,7 +403,7 @@ static void print_test_analysis(void) {
     printf("  • Illustrates double-free vulnerability exploitation\n");
     printf("  • Highlights CHERI's temporal memory safety protection\n");
     
-    printf("="*80 "\n");
+    printf("================================================================================\n");
 }
 
 /**
@@ -416,7 +416,7 @@ int main(void) {
     printf("Expected on CHERI: Capability violations prevent double-free exploitation\n\n");
     
     // Initialize xBGAS runtime
-    if (xbrtime_init() != XBRTIME_SUCCESS) {
+    if (xbrtime_init() != 0) {
         fprintf(stderr, "ERROR: Failed to initialize xBGAS runtime\n");
         return EXIT_FAILURE;
     }
