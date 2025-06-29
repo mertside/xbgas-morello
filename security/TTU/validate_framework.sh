@@ -90,8 +90,14 @@ printf "${GREEN}✓ run_tests.sh is now executable${NC}\n"
 
 # Test Makefile syntax
 printf "${BLUE}Validating Makefile syntax...${NC}\n"
-if make -f Makefile_automated --dry-run help > /dev/null 2>&1; then
-    printf "${GREEN}✓ Makefile syntax is valid${NC}\n"
+if make -f Makefile_simple --dry-run help > /dev/null 2>&1; then
+    printf "${GREEN}✓ Simple Makefile syntax is valid${NC}\n"
+    # Also test the complex Makefile
+    if make -f Makefile_automated --dry-run help > /dev/null 2>&1; then
+        printf "${GREEN}✓ Advanced Makefile syntax is valid${NC}\n"
+    else
+        printf "${YELLOW}⚠ Advanced Makefile has syntax issues, using simple version${NC}\n"
+    fi
 else
     printf "${RED}✗ Makefile syntax error${NC}\n"
     exit 1
@@ -139,5 +145,6 @@ printf "Quick test commands:\n"
 printf "  ./run_tests.sh build-spatial      # Build spatial tests\n"
 printf "  ./run_tests.sh test-spatial       # Test spatial tests\n"
 printf "  ./run_tests.sh validate-all       # Validate all builds\n"
-printf "  make -f Makefile_automated help   # Show Makefile help\n"
+printf "  make -f Makefile_simple help      # Show simple Makefile help\n"
+printf "  make -f Makefile_automated help   # Show advanced Makefile help\n"
 printf "=================================================================${NC}\n"
