@@ -248,7 +248,7 @@ static test_result_t phase5_exploit_attempt(long thread_id,
 /**
  * @brief Main UAF to code reuse vulnerability test function
  */
-static void uaf_code_reuse_vulnerability_test(void* arg) {
+static void* uaf_code_reuse_vulnerability_test(void* arg) {
     long thread_id = *(long*)arg;
     free(arg);  // Clean up the allocated thread ID
     test_result_t result = TEST_RESULT_UNKNOWN;
@@ -311,7 +311,7 @@ static void uaf_code_reuse_vulnerability_test(void* arg) {
             break;
     }
     
-    // No return value for void function
+    return NULL;
 }
 
 /**
@@ -379,9 +379,11 @@ int main(void) {
     
     // Execute tests across all PEs
     for (long i = 0; i < num_pes; i++) {
+        long *thread_id_ptr = malloc(sizeof(long));
+        *thread_id_ptr = i;
         tpool_add_work(threads[i].thread_queue, 
                       uaf_code_reuse_vulnerability_test, 
-                      (void*)i);
+                      thread_id_ptr);
     }
     
     // Wait for all tests to complete
