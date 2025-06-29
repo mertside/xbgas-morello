@@ -5,12 +5,7 @@
  * REFACTORED FOR xBGAS-Morello TTU Security Evaluation
  * =====================================================
  * 
- *         /**
- * @brief Main UAF to code reuse vulnerability test function
- */
-static void* uaf_code_reuse_vulnerability_test(void* arg) {
-    long thread_id = (long)arg;f("  [Thread %ld] PROTECTION: Signal %ld caught during UAF attempt\n", 
-               thread_id, (long)signal_caught);LNERABILITY TYPE: Use-After-Free (UAF) -> Code Reuse Attack
+ * VULNERABILITY TYPE: Use-After-Free (UAF) -> Code Reuse Attack
  * SECURITY IMPACT: Critical - Code execution, privilege escalation
  * CHERI MITIGATION: Capability temporal safety, bounds checking
  * 
