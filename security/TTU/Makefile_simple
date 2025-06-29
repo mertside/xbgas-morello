@@ -1,0 +1,303 @@
+#
+# Simplified Automated Makefile for xBGAS Memory Safety Tests
+# This version removes complex shell constructs that might cause syntax errors
+#
+
+# ============================================================================
+#                              CONFIGURATION
+# ============================================================================
+
+# Compiler Configuration
+CC = cc
+CFLAGS = -g -O2 -Wall -Wextra -std=c99
+LDFLAGS = -lpthread -lm
+INCLUDES = -I../../runtime
+ASM_SOURCES = ../../runtime/xbMrtime_api_asm.s
+COMPILE = $(CC) $(CFLAGS) $(INCLUDES) $(LDFLAGS) $(ASM_SOURCES)
+
+# Output Directories
+OUTDIR = ./bin
+OBJDIR = ./obj
+REPORTDIR = ./reports
+
+# ============================================================================
+#                         REFACTORED TEST SOURCES
+# ============================================================================
+
+# Refactored Spatial Safety Tests
+REFACTORED_SPATIAL_SOURCES = \
+	ttu_s1_free_not_at_start_refactored.c \
+	ttu_s2_free_not_on_heap_refactored.c \
+	ttu_s3_null_ptr_dereference_refactored.c \
+	ttu_s4_oob_read_refactored.c \
+	ttu_s5_oob_write_refactored.c
+
+# Refactored Temporal Safety Tests  
+REFACTORED_TEMPORAL_SOURCES = \
+	ttu_t1_double_free_refactored.c \
+	ttu_t2_hm_fake_chunk_malloc_refactored.c \
+	ttu_t3_hm_house_of_spirit_refactored.c \
+	ttu_t4_hm_p_and_c_chunk_refactored.c \
+	ttu_t5_use_after_free_refactored.c \
+	ttu_t6_uaf_function_pointer_refactored_fixed.c \
+	ttu_t7_uaf_memcpy_refactored.c
+
+# Refactored Real-world Vulnerability Tests
+REFACTORED_REALWORLD_SOURCES = \
+	ttu_r1_HeartBleed_refactored.c \
+	ttu_r2_dop_refactored.c \
+	ttu_r3_uaf_to_code_reuse_refactored.c \
+	ttu_r4_illegal_ptr_deref_refactored.c \
+	ttu_r5_df_switch_refactored.c
+
+# Heap Manipulation Subset
+REFACTORED_HEAP_SOURCES = \
+	ttu_t2_hm_fake_chunk_malloc_refactored.c \
+	ttu_t3_hm_house_of_spirit_refactored.c \
+	ttu_t4_hm_p_and_c_chunk_refactored.c
+
+# All Refactored Sources
+ALL_REFACTORED_SOURCES = $(REFACTORED_SPATIAL_SOURCES) $(REFACTORED_TEMPORAL_SOURCES) $(REFACTORED_REALWORLD_SOURCES)
+
+# ============================================================================
+#                              TARGET DEFINITIONS  
+# ============================================================================
+
+# Refactored Executables by Category
+REFACTORED_SPATIAL_TARGETS = $(REFACTORED_SPATIAL_SOURCES:.c=.exe)
+REFACTORED_TEMPORAL_TARGETS = $(REFACTORED_TEMPORAL_SOURCES:.c=.exe)
+REFACTORED_REALWORLD_TARGETS = $(REFACTORED_REALWORLD_SOURCES:.c=.exe)
+REFACTORED_HEAP_TARGETS = $(REFACTORED_HEAP_SOURCES:.c=.exe)
+
+# All Refactored Executables
+ALL_REFACTORED_TARGETS = $(ALL_REFACTORED_SOURCES:.c=.exe)
+
+# ============================================================================
+#                              BUILD RULES
+# ============================================================================
+
+# Default target - build all refactored tests
+.PHONY: all
+all: directories $(ALL_REFACTORED_TARGETS)
+	@echo "===================================================="
+	@echo "All Refactored TTU Memory Safety Tests Built Successfully!"
+	@echo "===================================================="
+	@echo "Spatial Safety Tests: $(words $(REFACTORED_SPATIAL_TARGETS)) files"
+	@echo "Temporal Safety Tests: $(words $(REFACTORED_TEMPORAL_TARGETS)) files"
+	@echo "Real-world Tests: $(words $(REFACTORED_REALWORLD_TARGETS)) files"
+	@echo "Heap Manipulation Tests: $(words $(REFACTORED_HEAP_TARGETS)) files"
+	@echo "===================================================="
+
+# Create necessary directories
+.PHONY: directories
+directories:
+	@mkdir -p $(OUTDIR) $(OBJDIR) $(REPORTDIR)
+
+# ============================================================================
+#                        REFACTORED TEST BUILD TARGETS
+# ============================================================================
+
+# Build refactored spatial safety tests
+.PHONY: spatial-refactored
+spatial-refactored: directories $(REFACTORED_SPATIAL_TARGETS)
+	@echo "Refactored spatial safety tests built successfully!"
+
+# Build refactored temporal safety tests
+.PHONY: temporal-refactored
+temporal-refactored: directories $(REFACTORED_TEMPORAL_TARGETS)
+	@echo "Refactored temporal safety tests built successfully!"
+
+# Build refactored real-world vulnerability tests
+.PHONY: realworld-refactored
+realworld-refactored: directories $(REFACTORED_REALWORLD_TARGETS)
+	@echo "Refactored real-world vulnerability tests built successfully!"
+
+# Build refactored heap manipulation tests
+.PHONY: heap-refactored
+heap-refactored: directories $(REFACTORED_HEAP_TARGETS)
+	@echo "Refactored heap manipulation tests built successfully!"
+
+# ============================================================================
+#                           COMPILATION RULES
+# ============================================================================
+
+# Generic rule for building executables
+%.exe: %.c
+	@echo "Building $@..."
+	@$(COMPILE) -o $@ $< > $(REPORTDIR)/build_$*.log 2>&1 || { echo "Build failed for $@"; exit 1; }
+	@echo "Successfully built $@"
+
+# ============================================================================
+#                        SIMPLE TEST EXECUTION
+# ============================================================================
+
+# Run refactored spatial safety tests
+.PHONY: test-spatial-refactored
+test-spatial-refactored: spatial-refactored
+	@echo "===================================================="
+	@echo "Running Refactored Spatial Safety Tests"
+	@echo "===================================================="
+	@for test in $(REFACTORED_SPATIAL_TARGETS); do \
+		echo "Running $$test..."; \
+		timeout 30s ./$$test > $(REPORTDIR)/$$test.output 2>&1 && echo "PASSED: $$test" || echo "FAILED: $$test"; \
+	done
+
+# Run refactored temporal safety tests
+.PHONY: test-temporal-refactored
+test-temporal-refactored: temporal-refactored
+	@echo "===================================================="
+	@echo "Running Refactored Temporal Safety Tests"
+	@echo "===================================================="
+	@for test in $(REFACTORED_TEMPORAL_TARGETS); do \
+		echo "Running $$test..."; \
+		timeout 30s ./$$test > $(REPORTDIR)/$$test.output 2>&1 && echo "PASSED: $$test" || echo "FAILED: $$test"; \
+	done
+
+# Run refactored real-world vulnerability tests
+.PHONY: test-realworld-refactored
+test-realworld-refactored: realworld-refactored
+	@echo "===================================================="
+	@echo "Running Refactored Real-world Vulnerability Tests"
+	@echo "===================================================="
+	@for test in $(REFACTORED_REALWORLD_TARGETS); do \
+		echo "Running $$test..."; \
+		timeout 30s ./$$test > $(REPORTDIR)/$$test.output 2>&1 && echo "PASSED: $$test" || echo "FAILED: $$test"; \
+	done
+
+# Run refactored heap manipulation tests
+.PHONY: test-heap-refactored
+test-heap-refactored: heap-refactored
+	@echo "===================================================="
+	@echo "Running Refactored Heap Manipulation Tests"
+	@echo "===================================================="
+	@for test in $(REFACTORED_HEAP_TARGETS); do \
+		echo "Running $$test..."; \
+		timeout 30s ./$$test > $(REPORTDIR)/$$test.output 2>&1 && echo "PASSED: $$test" || echo "FAILED: $$test"; \
+	done
+
+# Run all refactored tests
+.PHONY: test-all-refactored
+test-all-refactored: all
+	@echo "========================================================="
+	@echo "Comprehensive Refactored TTU Memory Safety Test Suite"
+	@echo "========================================================="
+	@$(MAKE) test-spatial-refactored
+	@$(MAKE) test-temporal-refactored
+	@$(MAKE) test-realworld-refactored
+	@$(MAKE) test-heap-refactored
+
+# ============================================================================
+#                             VALIDATION TARGETS
+# ============================================================================
+
+# Validate all refactored tests compile successfully
+.PHONY: validate-build
+validate-build: directories
+	@echo "===================================================="
+	@echo "Validating Build Process for All Refactored Tests"
+	@echo "===================================================="
+	@for source in $(ALL_REFACTORED_SOURCES); do \
+		echo "Validating build for $$source..."; \
+		target=$${source%.c}.exe; \
+		if $(COMPILE) -o $$target $$source > $(REPORTDIR)/build_$$target.log 2>&1; then \
+			echo "Build successful: $$source"; \
+			rm -f $$target; \
+		else \
+			echo "Build failed: $$source"; \
+		fi; \
+	done
+
+# Quick syntax check for all refactored sources
+.PHONY: syntax-check
+syntax-check:
+	@echo "===================================================="
+	@echo "Performing Syntax Check on Refactored Sources"
+	@echo "===================================================="
+	@for source in $(ALL_REFACTORED_SOURCES); do \
+		echo "Checking syntax: $$source"; \
+		if $(CC) $(CFLAGS) $(INCLUDES) -fsyntax-only $$source 2>/dev/null; then \
+			echo "Syntax OK: $$source"; \
+		else \
+			echo "Syntax errors: $$source"; \
+		fi; \
+	done
+
+# ============================================================================
+#                              MAINTENANCE TARGETS
+# ============================================================================
+
+# Clean all generated files
+.PHONY: clean
+clean:
+	@echo "Cleaning up generated files..."
+	@rm -f *.exe *.o *.core
+	@rm -rf $(OUTDIR) $(OBJDIR) $(REPORTDIR)
+	@echo "Clean completed."
+
+# Clean and rebuild everything
+.PHONY: rebuild
+rebuild: clean all
+
+# ============================================================================
+#                              HELP TARGET
+# ============================================================================
+
+.PHONY: help
+help:
+	@echo "========================================================="
+	@echo "xBGAS TTU Memory Safety Tests - Simplified Build System"
+	@echo "========================================================="
+	@echo "BUILD TARGETS:"
+	@echo "  all                    - Build all refactored tests (default)"
+	@echo "  spatial-refactored     - Build refactored spatial safety tests"
+	@echo "  temporal-refactored    - Build refactored temporal safety tests"
+	@echo "  realworld-refactored   - Build refactored real-world tests"
+	@echo "  heap-refactored        - Build refactored heap manipulation tests"
+	@echo ""
+	@echo "TEST EXECUTION TARGETS:"
+	@echo "  test-all-refactored    - Run all refactored tests"
+	@echo "  test-spatial-refactored - Run refactored spatial tests"
+	@echo "  test-temporal-refactored - Run refactored temporal tests"
+	@echo "  test-realworld-refactored - Run refactored real-world tests"
+	@echo "  test-heap-refactored   - Run refactored heap tests"
+	@echo ""
+	@echo "VALIDATION TARGETS:"
+	@echo "  validate-build         - Validate all refactored tests compile"
+	@echo "  syntax-check           - Check syntax of all refactored sources"
+	@echo ""
+	@echo "MAINTENANCE TARGETS:"
+	@echo "  clean                  - Remove all generated files"
+	@echo "  rebuild                - Clean and rebuild everything"
+	@echo "  help                   - Show this help message"
+	@echo ""
+	@echo "SHORTCUTS:"
+	@echo "  build                  - Same as 'all'"
+	@echo "  test                   - Same as 'test-all-refactored'"
+	@echo "  validate               - Same as 'validate-build'"
+	@echo "========================================================="
+
+# ============================================================================
+#                              SHORTCUTS
+# ============================================================================
+
+# Quick shortcuts
+.PHONY: build test validate
+build: all
+test: test-all-refactored
+validate: validate-build
+
+# Category shortcuts
+.PHONY: spatial temporal realworld heap
+spatial: spatial-refactored
+temporal: temporal-refactored
+realworld: realworld-refactored
+heap: heap-refactored
+
+# Test shortcuts
+.PHONY: test-spatial test-temporal test-realworld test-heap
+test-spatial: test-spatial-refactored
+test-temporal: test-temporal-refactored
+test-realworld: test-realworld-refactored
+test-heap: test-heap-refactored
+
+# EOF
