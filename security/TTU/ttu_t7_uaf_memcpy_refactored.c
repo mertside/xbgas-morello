@@ -228,7 +228,7 @@ static int check_data_corruption(void) {
 //=============================================================================
 
 /** @brief Execute the use-after-free memcpy vulnerability test */
-static void* execute_uaf_memcpy_test(void* arg) {
+static void execute_uaf_memcpy_test(void* arg) {
     long tid = (long)arg;
     test_state.thread_id = tid;
     int recovery_signal = 0;
@@ -256,11 +256,10 @@ static void* execute_uaf_memcpy_test(void* arg) {
     test_state.current_phase = PHASE_ALLOCATE_FIRST;
     printf("[Thread %ld] 📋 Phase %d: Allocate first buffer\n", tid, PHASE_ALLOCATE_FIRST);
     
-    test_state.first_buffer = (char*)malloc(BUFFER_SIZE);
-    if (!test_state.first_buffer) {
-        printf("[Thread %ld] ❌ Failed to allocate first buffer\n", tid);
-        return NULL;
-    }
+    test_state.first_buffer = (char*)malloc(BUFFER_SIZE);        if (!test_state.first_buffer) {
+            printf("[Thread %ld] ❌ Failed to allocate first buffer\n", tid);
+            return;
+        }
     test_state.allocated_memory[test_state.allocation_count++] = test_state.first_buffer;
     
     analyze_pointer("First buffer allocation", (void*)test_state.first_buffer);
@@ -296,11 +295,10 @@ static void* execute_uaf_memcpy_test(void* arg) {
     printf("[Thread %ld] 📋 Phase %d: Allocate second buffer\n", tid, PHASE_ALLOCATE_SECOND);
     
     // Allocate new memory that might reuse the same address
-    test_state.second_buffer = (char*)malloc(BUFFER_SIZE);
-    if (!test_state.second_buffer) {
-        printf("[Thread %ld] ❌ Failed to allocate second buffer\n", tid);
-        return NULL;
-    }
+    test_state.second_buffer = (char*)malloc(BUFFER_SIZE);        if (!test_state.second_buffer) {
+            printf("[Thread %ld] ❌ Failed to allocate second buffer\n", tid);
+            return;
+        }
     test_state.allocated_memory[test_state.allocation_count++] = test_state.second_buffer;
     
     analyze_memory_state("after second allocation");
@@ -372,7 +370,7 @@ cleanup_and_exit:
     }
     
     printf("[Thread %ld] 🏁 %s test finished\n\n", tid, TEST_NAME);
-    return NULL;
+}
 }
 
 //=============================================================================
@@ -400,7 +398,7 @@ int main(void) {
     
     // Execute test on all available processing elements
     for (long i = 0; i < num_pes; i++) {
-        tpool_add_work(threads[i].thread_queue, execute_uaf_memcpy_test, (void*)i);
+        tpool_add_work(threads[i].thread_queue, execute_uaf_memcpy_test, (void*)(uintptr_t)i);
     }
     
     // Wait for all threads to complete
