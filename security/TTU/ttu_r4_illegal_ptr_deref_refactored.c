@@ -336,9 +336,9 @@ static void* illegal_pointer_dereference_test(void* arg) {
  * @brief Print comprehensive test results and analysis
  */
 static void print_test_analysis(void) {
-    printf("\n" "="*80 "\n");
+    printf("\n================================================================================\n");
     printf("ILLEGAL POINTER DEREFERENCE - TEST ANALYSIS\n");
-    printf("="*80 "\n");
+    printf("================================================================================\n");
     
     printf("Test Statistics:\n");
     printf("  Total tests executed:         %d\n", global_stats.total_tests);
@@ -388,7 +388,7 @@ static void print_test_analysis(void) {
     printf("  • Illustrates CHERI's spatial memory safety mechanisms\n");
     printf("  • Highlights risks of uninitialized pointer usage\n");
     
-    printf("="*80 "\n");
+    printf("================================================================================\n");
 }
 
 /**
@@ -412,7 +412,7 @@ int main(void) {
     printf("\n");
     
     // Initialize xBGAS runtime
-    if (xbrtime_init() != XBRTIME_SUCCESS) {
+    if (xbrtime_init() != 0) {
         fprintf(stderr, "ERROR: Failed to initialize xBGAS runtime\n");
         return EXIT_FAILURE;
     }
