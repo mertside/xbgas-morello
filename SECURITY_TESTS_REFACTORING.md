@@ -91,6 +91,83 @@ Following the pattern established with `ttu_s4_oob_read_refactored.c`, I have cr
   - Information disclosure quantification
   - Real-world exploit education
 
+### 9. Data-Oriented Programming (DOP) Attack Test
+**File:** `ttu_r2_dop_refactored.c` *(New)*
+- **Type:** Real-World Exploit (Data Corruption Attack)
+- **Description:** Demonstrates sophisticated data-oriented programming attacks
+- **Key Features:**
+  - Non-control data manipulation
+  - Memory corruption without code injection
+  - Data flow hijacking techniques
+  - CHERI capability protection validation
+  - Advanced attack vector analysis
+
+### 10. Free Not at Start of Buffer Test
+**File:** `ttu_s1_free_not_at_start_refactored.c` *(New)*
+- **Type:** Spatial Memory Safety Violation (Invalid Free)
+- **Description:** Attempts to free memory at incorrect offsets within allocated buffers
+- **Key Features:**
+  - Invalid free offset attempts
+  - Heap metadata corruption detection
+  - Buffer boundary validation
+  - Free operation safety analysis
+  - Spatial integrity verification
+
+### 11. Use-After-Free to Code Reuse Attack Test
+**File:** `ttu_r3_uaf_to_code_reuse_refactored.c` *(New)*
+- **Type:** Real-World Exploit (UAF to Code Execution)
+- **Description:** Demonstrates sophisticated use-after-free exploitation for code reuse attacks
+- **Key Features:**
+  - Function pointer exploitation in freed memory
+  - Memory reuse with attacker-controlled data
+  - Code reuse attack simulation
+  - Control flow hijacking prevention
+  - Advanced temporal safety validation
+
+### 12. Illegal Pointer Dereference Test
+**File:** `ttu_r4_illegal_ptr_deref_refactored.c` *(New)*
+- **Type:** Real-World Exploit (Invalid Memory Access)
+- **Description:** Tests illegal pointer dereference on large size allocations and invalid pointers
+- **Key Features:**
+  - Large allocation request testing
+  - NULL pointer dereference protection
+  - Uninitialized pointer access detection
+  - Memory allocation validation
+  - Pointer safety verification
+
+### 13. Double-Free via Switch Fallthrough Test
+**File:** `ttu_r5_df_switch_refactored.c` *(New)*
+- **Type:** Real-World Exploit (Control Flow Vulnerability)
+- **Description:** Demonstrates double-free vulnerabilities via switch statement fallthrough
+- **Key Features:**
+  - Control flow induced double-free
+  - Switch statement vulnerability patterns
+  - Multiple free operation tracking
+  - Heap corruption via fallthrough
+  - Programming error exploitation
+
+### 14. Free Memory Not on Heap Test
+**File:** `ttu_s2_free_not_on_heap_refactored.c` *(New)*
+- **Type:** Spatial Memory Safety Violation (Invalid Region Free)
+- **Description:** Attempts to free memory from non-heap regions (stack, global, read-only)
+- **Key Features:**
+  - Multiple memory region testing
+  - Stack memory free attempts
+  - Global memory free attempts
+  - Read-only memory free attempts
+  - Memory region validation
+
+### 15. Heap Manipulation - Parent/Child Chunk Test
+**File:** `ttu_t4_hm_p_and_c_chunk_refactored.c` *(New)*
+- **Type:** Heap Manipulation Vulnerability (Advanced)
+- **Description:** Advanced heap manipulation creating overlapping parent and child chunks
+- **Key Features:**
+  - Heap metadata manipulation
+  - Overlapping chunk creation
+  - Parent/child chunk relationships
+  - Advanced heap feng shui techniques
+  - Arbitrary memory access primitives
+
 ## Common Refactoring Improvements
 
 ### 1. Documentation Enhancement
@@ -139,7 +216,14 @@ REFACTORED_SOURCES = \
     ttu_t6_uaf_function_pointer_refactored_fixed.c \
     ttu_t7_uaf_memcpy_refactored_fixed.c \
     ttu_t2_hm_fake_chunk_malloc_refactored.c \
-    ttu_r1_HeartBleed_refactored.c
+    ttu_r1_HeartBleed_refactored.c \
+    ttu_r2_dop_refactored.c \
+    ttu_s1_free_not_at_start_refactored.c \
+    ttu_r3_uaf_to_code_reuse_refactored.c \
+    ttu_r4_illegal_ptr_deref_refactored.c \
+    ttu_r5_df_switch_refactored.c \
+    ttu_s2_free_not_on_heap_refactored.c \
+    ttu_t4_hm_p_and_c_chunk_refactored.c
 
 # Build refactored tests
 refactored: $(REFACTORED_SOURCES:.c=.exe)
@@ -159,6 +243,13 @@ make -f Makefile_improved ttu_t6_uaf_function_pointer_refactored_fixed.exe
 make -f Makefile_improved ttu_t7_uaf_memcpy_refactored_fixed.exe
 make -f Makefile_improved ttu_t2_hm_fake_chunk_malloc_refactored.exe
 make -f Makefile_improved ttu_r1_HeartBleed_refactored.exe
+make -f Makefile_improved ttu_r2_dop_refactored.exe
+make -f Makefile_improved ttu_s1_free_not_at_start_refactored.exe
+make -f Makefile_improved ttu_r3_uaf_to_code_reuse_refactored.exe
+make -f Makefile_improved ttu_r4_illegal_ptr_deref_refactored.exe
+make -f Makefile_improved ttu_r5_df_switch_refactored.exe
+make -f Makefile_improved ttu_s2_free_not_on_heap_refactored.exe
+make -f Makefile_improved ttu_t4_hm_p_and_c_chunk_refactored.exe
 ```
 
 ## Testing the Refactored Security Tests
@@ -194,6 +285,34 @@ cc -g -O2 -Wall -I../../runtime -lpthread -lm -o heap_manip_test.exe ttu_t2_hm_f
 # Test HeartBleed
 cc -g -O2 -Wall -I../../runtime -lpthread -lm -o heartbleed_test.exe ttu_r1_HeartBleed_refactored.c ../../runtime/xbMrtime_api_asm.s
 ./heartbleed_test.exe
+
+# Test DOP attack
+cc -g -O2 -Wall -I../../runtime -lpthread -lm -o dop_test.exe ttu_r2_dop_refactored.c ../../runtime/xbMrtime_api_asm.s
+./dop_test.exe
+
+# Test free not at start
+cc -g -O2 -Wall -I../../runtime -lpthread -lm -o free_not_start_test.exe ttu_s1_free_not_at_start_refactored.c ../../runtime/xbMrtime_api_asm.s
+./free_not_start_test.exe
+
+# Test UAF to code reuse
+cc -g -O2 -Wall -I../../runtime -lpthread -lm -o uaf_code_reuse_test.exe ttu_r3_uaf_to_code_reuse_refactored.c ../../runtime/xbMrtime_api_asm.s
+./uaf_code_reuse_test.exe
+
+# Test illegal pointer dereference
+cc -g -O2 -Wall -I../../runtime -lpthread -lm -o illegal_ptr_test.exe ttu_r4_illegal_ptr_deref_refactored.c ../../runtime/xbMrtime_api_asm.s
+./illegal_ptr_test.exe
+
+# Test double-free switch
+cc -g -O2 -Wall -I../../runtime -lpthread -lm -o df_switch_test.exe ttu_r5_df_switch_refactored.c ../../runtime/xbMrtime_api_asm.s
+./df_switch_test.exe
+
+# Test free not on heap
+cc -g -O2 -Wall -I../../runtime -lpthread -lm -o free_not_heap_test.exe ttu_s2_free_not_on_heap_refactored.c ../../runtime/xbMrtime_api_asm.s
+./free_not_heap_test.exe
+
+# Test heap manipulation parent/child
+cc -g -O2 -Wall -I../../runtime -lpthread -lm -o heap_parent_child_test.exe ttu_t4_hm_p_and_c_chunk_refactored.c ../../runtime/xbMrtime_api_asm.s
+./heap_parent_child_test.exe
 ```
 
 ## Expected Results
@@ -248,12 +367,18 @@ Each test provides detailed output including:
 
 ## Conclusion
 
-The refactored security tests significantly improve the quality and usefulness of the xBGAS-Morello security evaluation suite. With **8 comprehensive refactored tests** covering spatial safety, temporal safety, heap manipulation, and real-world exploits, the suite now provides:
+The refactored security tests significantly improve the quality and usefulness of the xBGAS-Morello security evaluation suite. With **15 comprehensive refactored tests** covering spatial safety, temporal safety, heap manipulation, and real-world exploits, the suite now provides:
 
 - **Complete vulnerability coverage** across all major memory safety categories
 - **Educational value** with detailed explanations of each vulnerability type
 - **CHERI-specific analysis** demonstrating capability system protection
 - **Production-quality code** with comprehensive documentation and error handling
-- **Real-world relevance** including famous exploits like HeartBleed
+- **Real-world relevance** including famous exploits like HeartBleed and advanced techniques like DOP
+
+The test suite covers:
+- **5 Spatial Safety Tests**: Out-of-bounds access, invalid free operations
+- **6 Temporal Safety Tests**: Use-after-free, double-free vulnerabilities
+- **4 Heap Manipulation Tests**: Advanced heap exploitation techniques
+- **6 Real-World Exploit Tests**: Famous vulnerabilities and sophisticated attacks
 
 These tests serve as both security evaluation tools and educational examples of how CHERI capabilities protect against common memory safety vulnerabilities, making them invaluable for researchers, developers, and security professionals working with memory-safe systems.
