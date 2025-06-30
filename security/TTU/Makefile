@@ -225,9 +225,9 @@ run-all: all
 	@echo "========================================================="
 	@echo "Running comprehensive TTU security test suite"
 	@echo "========================================================="
-	@$(MAKE) -f $(SRCDIR)/Makefile_objaware run-spatial
-	@$(MAKE) -f $(SRCDIR)/Makefile_objaware run-temporal
-	@$(MAKE) -f $(SRCDIR)/Makefile_objaware run-realworld
+	@$(MAKE) run-spatial
+	@$(MAKE) run-temporal
+	@$(MAKE) run-realworld
 
 # ============================================================================
 #                              VALIDATION
