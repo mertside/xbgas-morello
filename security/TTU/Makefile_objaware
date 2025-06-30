@@ -319,13 +319,21 @@ help:
 	@echo "  show-failures- Show tests that completed normally"
 	@echo "  show-all-logs- Show all test execution logs"
 	@echo ""
+	@echo "SCRIPTS:"
+	@echo "  complete-suite- Run complete automated test suite"
+	@echo "  interpret     - Interpret test results (CHERI-aware)"
+	@echo "  system-info   - Show system and environment info"
+	@echo "  validate-build- Validate build system"
+	@echo "  find-reports  - Locate test reports"
+	@echo "  cleanup-scripts- Remove legacy scattered scripts"
+	@echo ""
 	@echo "IMPORTANT - CHERI-Morello Result Interpretation:"
 	@echo "  ✓ 'Killed' or 'In-address space security exception' = SUCCESS"
 	@echo "    (CHERI caught the memory safety violation)"
 	@echo "  ⚠ Normal program completion = Potential issue"
 	@echo "    (Vulnerability may not have been caught)"
 	@echo ""
-	@echo "Quick start: make run-all && ./interpret_results.sh"
+	@echo "Quick start: make complete-suite"
 
 # ============================================================================
 #                         ANALYSIS AND REPORTING
@@ -435,10 +443,41 @@ find-all-reports:
 		echo "  Modified: `ls -l $$file | awk '{print $$6, $$7, $$8}'`"; \
 	done || echo "No run_*.log files found anywhere"
 
+# ============================================================================
+#                              SCRIPT INTEGRATION
+# ============================================================================
+
+# Quick access to organized scripts
+system-info:
+	@chmod +x scripts/system_info.sh
+	@scripts/system_info.sh
+
+validate-build:
+	@chmod +x scripts/validate_build.sh
+	@scripts/validate_build.sh
+
+complete-suite:
+	@chmod +x scripts/run_complete_suite.sh
+	@scripts/run_complete_suite.sh
+
+interpret:
+	@chmod +x scripts/interpret_results.sh
+	@scripts/interpret_results.sh
+
+find-reports:
+	@chmod +x scripts/find_reports.sh
+	@scripts/find_reports.sh
+
+# Legacy cleanup
+cleanup-scripts:
+	@chmod +x scripts/cleanup_legacy.sh
+	@scripts/cleanup_legacy.sh
+
 .PHONY: all check-environment spatial temporal realworld heap
 .PHONY: run-spatial run-temporal run-realworld run-all
 .PHONY: check-files compile-test clean clean-logs config help
 .PHONY: summary analyze show-failures show-all-logs
 .PHONY: debug-reports find-all-reports
+.PHONY: system-info validate-build complete-suite interpret find-reports cleanup-scripts
 
 # EOF
