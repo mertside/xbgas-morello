@@ -399,9 +399,46 @@ show-all-logs:
 		fi; \
 	done
 
+# Debug and diagnostic targets
+debug-reports:
+	@echo "=== Report Location Debug ==="
+	@echo "Current directory: `pwd`"
+	@echo "REPORTDIR setting: $(REPORTDIR)"
+	@echo "Expected report path: $(REPORTDIR)"
+	@echo ""
+	@echo "Checking for reports..."
+	@if test -d "$(REPORTDIR)"; then \
+		echo "Report directory exists: $(REPORTDIR)"; \
+		if ls $(REPORTDIR)/run_*.log >/dev/null 2>&1; then \
+			echo "Found log files:"; \
+			ls -la $(REPORTDIR)/run_*.log | sed 's/^/  /'; \
+		else \
+			echo "No log files found in $(REPORTDIR)"; \
+		fi; \
+	else \
+		echo "Report directory does not exist: $(REPORTDIR)"; \
+	fi
+	@echo ""
+	@echo "Checking for executables..."
+	@if ls *.exe >/dev/null 2>&1; then \
+		echo "Found executables:"; \
+		ls -la *.exe | sed 's/^/  /'; \
+	else \
+		echo "No executables found"; \
+	fi
+
+find-all-reports:
+	@echo "=== Finding all test reports ==="
+	@find . -name "run_*.log" -type f 2>/dev/null | while read file; do \
+		echo "Found: $$file"; \
+		echo "  Size: `ls -lh $$file | awk '{print $$5}'`"; \
+		echo "  Modified: `ls -l $$file | awk '{print $$6, $$7, $$8}'`"; \
+	done || echo "No run_*.log files found anywhere"
+
 .PHONY: all check-environment spatial temporal realworld heap
 .PHONY: run-spatial run-temporal run-realworld run-all
 .PHONY: check-files compile-test clean clean-logs config help
 .PHONY: summary analyze show-failures show-all-logs
+.PHONY: debug-reports find-all-reports
 
 # EOF
