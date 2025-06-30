@@ -9,24 +9,45 @@ echo "                 CHERI-Morello Memory Safety Test Results"
 echo "==============================================================================="
 echo ""
 
-# Check if we're in obj directory and adjust paths
+# Check multiple possible locations for test reports
+echo "Searching for test reports..."
+
+# Possible locations for reports
+POSSIBLE_DIRS=""
 if pwd | grep -q "/obj$"; then
-    REPORT_DIR="."
-    echo "Running from obj directory - checking local reports"
+    # We're in obj directory
+    POSSIBLE_DIRS="./reports . ../reports"
+    echo "Running from obj directory"
 else
-    REPORT_DIR="obj"
-    echo "Running from TTU directory - checking obj/reports"
+    # We're in TTU directory  
+    POSSIBLE_DIRS="obj/reports obj ./reports reports"
+    echo "Running from TTU directory"
 fi
 
-# Look for report files
-if [ -d "$REPORT_DIR" ] && ls "$REPORT_DIR"/run_*.log >/dev/null 2>&1; then
-    echo "Found test reports in: $REPORT_DIR"
-    echo ""
-else
+REPORT_DIR=""
+for dir in $POSSIBLE_DIRS; do
+    if [ -d "$dir" ] && ls "$dir"/run_*.log >/dev/null 2>&1; then
+        REPORT_DIR="$dir"
+        echo "Found test reports in: $REPORT_DIR"
+        break
+    fi
+done
+
+if [ -z "$REPORT_DIR" ]; then
     echo "❌ No test reports found!"
+    echo ""
+    echo "Searched in:"
+    for dir in $POSSIBLE_DIRS; do
+        echo "  - $dir"
+    done
+    echo ""
     echo "Please run 'make run-all' first to generate test results."
+    echo "The reports should be created in the 'reports' subdirectory"
+    echo "of wherever the tests are executed."
     exit 1
 fi
+
+echo ""
 
 echo "=== INTERPRETING RESULTS ==="
 echo ""
