@@ -40,32 +40,32 @@ REPORTDIR = ./reports
 
 # Test Sources with auto-detected source directory
 SPATIAL_SOURCES = \
-	$(SRCDIR)/ttu_s1_free_not_at_start_refactored.c \
-	$(SRCDIR)/ttu_s2_free_not_on_heap_refactored.c \
-	$(SRCDIR)/ttu_s3_null_ptr_dereference_refactored.c \
-	$(SRCDIR)/ttu_s4_oob_read_refactored.c \
-	$(SRCDIR)/ttu_s5_oob_write_refactored.c
+	$(SRCDIR)/ttu_s1_free_not_at_start.c \
+	$(SRCDIR)/ttu_s2_free_not_on_heap.c \
+	$(SRCDIR)/ttu_s3_null_ptr_dereference.c \
+	$(SRCDIR)/ttu_s4_oob_read.c \
+	$(SRCDIR)/ttu_s5_oob_write.c
 
 TEMPORAL_SOURCES = \
-	$(SRCDIR)/ttu_t1_double_free_refactored.c \
-	$(SRCDIR)/ttu_t2_hm_fake_chunk_malloc_refactored.c \
-	$(SRCDIR)/ttu_t3_hm_house_of_spirit_refactored.c \
-	$(SRCDIR)/ttu_t4_hm_p_and_c_chunk_refactored.c \
-	$(SRCDIR)/ttu_t5_use_after_free_refactored.c \
-	$(SRCDIR)/ttu_t6_uaf_function_pointer_refactored_fixed.c \
-	$(SRCDIR)/ttu_t7_uaf_memcpy_refactored.c
+	$(SRCDIR)/ttu_t1_double_free.c \
+	$(SRCDIR)/ttu_t2_hm_fake_chunk_malloc.c \
+	$(SRCDIR)/ttu_t3_hm_house_of_spirit.c \
+	$(SRCDIR)/ttu_t4_hm_p_and_c_chunk.c \
+	$(SRCDIR)/ttu_t5_use_after_free.c \
+	$(SRCDIR)/ttu_t6_uaf_function_pointer.c \
+	$(SRCDIR)/ttu_t7_uaf_memcpy.c
 
 REALWORLD_SOURCES = \
-	$(SRCDIR)/ttu_r1_HeartBleed_refactored.c \
-	$(SRCDIR)/ttu_r2_dop_refactored.c \
-	$(SRCDIR)/ttu_r3_uaf_to_code_reuse_refactored.c \
-	$(SRCDIR)/ttu_r4_illegal_ptr_deref_refactored.c \
-	$(SRCDIR)/ttu_r5_df_switch_refactored.c
+	$(SRCDIR)/ttu_r1_HeartBleed.c \
+	$(SRCDIR)/ttu_r2_dop.c \
+	$(SRCDIR)/ttu_r3_uaf_to_code_reuse.c \
+	$(SRCDIR)/ttu_r4_illegal_ptr_deref.c \
+	$(SRCDIR)/ttu_r5_df_switch.c
 
 HEAP_SOURCES = \
-	$(SRCDIR)/ttu_t2_hm_fake_chunk_malloc_refactored.c \
-	$(SRCDIR)/ttu_t3_hm_house_of_spirit_refactored.c \
-	$(SRCDIR)/ttu_t4_hm_p_and_c_chunk_refactored.c
+	$(SRCDIR)/ttu_t2_hm_fake_chunk_malloc.c \
+	$(SRCDIR)/ttu_t3_hm_house_of_spirit.c \
+	$(SRCDIR)/ttu_t4_hm_p_and_c_chunk.c
 
 # ============================================================================
 #                              BUILD TARGETS  
@@ -84,7 +84,7 @@ check-environment:
 	@echo "Runtime directory: $(RTDIR)"
 	@echo "Assembly source: $(ASM_SOURCE)"
 	@echo "Available refactored files in source dir:"
-	@ls -1 $(SRCDIR)/*_refactored*.c 2>/dev/null | wc -l | sed 's/^/  Found: /' || echo "  Found: 0"
+	@ls -1 $(SRCDIR)/**.c 2>/dev/null | wc -l | sed 's/^/  Found: /' || echo "  Found: 0"
 	@echo "Runtime directory exists: `test -d $(RTDIR) && echo YES || echo NO`"
 	@echo "Assembly source exists: `test -f $(ASM_SOURCE) && echo YES || echo NO`"
 .if !exists($(ASM_SOURCE))
@@ -252,7 +252,7 @@ check-files:
 compile-test:
 	@echo "=== Compilation Test ==="
 	@echo "Testing single file compilation..."
-	@test_file="$(SRCDIR)/ttu_s1_free_not_at_start_refactored.c"; \
+	@test_file="$(SRCDIR)/ttu_s1_free_not_at_start.c"; \
 	if test -f "$$test_file"; then \
 		echo "Compiling $$test_file..."; \
 		$(COMPILE) -o test_compile.exe $$test_file && \
