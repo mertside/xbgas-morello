@@ -326,6 +326,7 @@ help:
 	@echo "  validate-build- Validate build system"
 	@echo "  find-reports  - Locate test reports"
 	@echo "  cleanup-scripts- Remove legacy scattered scripts"
+	@echo "  cleanup-docs  - Remove redundant documentation"
 	@echo ""
 	@echo "IMPORTANT - CHERI-Morello Result Interpretation:"
 	@echo "  ✓ 'Killed' or 'In-address space security exception' = SUCCESS"
@@ -473,11 +474,15 @@ cleanup-scripts:
 	@chmod +x scripts/cleanup_legacy.sh
 	@scripts/cleanup_legacy.sh
 
+cleanup-docs:
+	@chmod +x scripts/cleanup_docs.sh
+	@scripts/cleanup_docs.sh
+
 .PHONY: all check-environment spatial temporal realworld heap
 .PHONY: run-spatial run-temporal run-realworld run-all
 .PHONY: check-files compile-test clean clean-logs config help
 .PHONY: summary analyze show-failures show-all-logs
 .PHONY: debug-reports find-all-reports
-.PHONY: system-info validate-build complete-suite interpret find-reports cleanup-scripts
+.PHONY: system-info validate-build complete-suite interpret find-reports cleanup-scripts cleanup-docs
 
 # EOF
