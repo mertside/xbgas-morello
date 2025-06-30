@@ -5,9 +5,6 @@
 
 echo "=== Testing All Temporal Safety Test Fixes ==="
 
-# Test from TTU directory
-cd /Users/MertSide/Developer/GitProjects/xBGAS/xbgas-morello/security/TTU
-
 echo "Building all temporal tests..."
 make -f Makefile_objaware temporal
 
