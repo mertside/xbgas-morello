@@ -179,8 +179,13 @@ run-spatial: spatial
 		target=`basename $$src .c`.exe; \
 		if test -f "$$target"; then \
 			echo "Running $$target..."; \
-			./$$target > $(REPORTDIR)/run_$$target.log 2>&1 && \
-				echo "  ✓ $$target completed" || echo "  ✗ $$target failed"; \
+			./$$target > $(REPORTDIR)/run_$$target.log 2>&1; \
+			status=$$?; \
+			if test $$status -eq 0; then \
+				echo "  ⚠ $$target completed normally (vulnerability may not be caught)"; \
+			else \
+				echo "  ✓ $$target trapped by CHERI-Morello (exit code: $$status)"; \
+			fi; \
 		fi; \
 	done
 
@@ -190,8 +195,13 @@ run-temporal: temporal
 		target=`basename $$src .c`.exe; \
 		if test -f "$$target"; then \
 			echo "Running $$target..."; \
-			./$$target > $(REPORTDIR)/run_$$target.log 2>&1 && \
-				echo "  ✓ $$target completed" || echo "  ✗ $$target failed"; \
+			./$$target > $(REPORTDIR)/run_$$target.log 2>&1; \
+			status=$$?; \
+			if test $$status -eq 0; then \
+				echo "  ⚠ $$target completed normally (vulnerability may not be caught)"; \
+			else \
+				echo "  ✓ $$target trapped by CHERI-Morello (exit code: $$status)"; \
+			fi; \
 		fi; \
 	done
 
@@ -201,8 +211,13 @@ run-realworld: realworld
 		target=`basename $$src .c`.exe; \
 		if test -f "$$target"; then \
 			echo "Running $$target..."; \
-			./$$target > $(REPORTDIR)/run_$$target.log 2>&1 && \
-				echo "  ✓ $$target completed" || echo "  ✗ $$target failed"; \
+			./$$target > $(REPORTDIR)/run_$$target.log 2>&1; \
+			status=$$?; \
+			if test $$status -eq 0; then \
+				echo "  ⚠ $$target completed normally (vulnerability may not be caught)"; \
+			else \
+				echo "  ✓ $$target trapped by CHERI-Morello (exit code: $$status)"; \
+			fi; \
 		fi; \
 	done
 
@@ -298,17 +313,95 @@ help:
 	@echo "  run-temporal - Run temporal tests"
 	@echo "  run-realworld- Run real-world tests"
 	@echo ""
-	@echo "VALIDATION:"
-	@echo "  compile-test - Test single file compilation"
+	@echo "ANALYSIS:"
+	@echo "  summary      - Show test results summary"  
+	@echo "  analyze      - Detailed security analysis"
+	@echo "  show-failures- Show tests that completed normally"
+	@echo "  show-all-logs- Show all test execution logs"
 	@echo ""
-	@echo "MAINTENANCE:"
-	@echo "  clean      - Remove generated files"
-	@echo "  clean-logs - Clean only log files"
-	@echo "  help       - Show this help"
+	@echo "IMPORTANT - CHERI-Morello Result Interpretation:"
+	@echo "  ✓ 'Killed' or 'In-address space security exception' = SUCCESS"
+	@echo "    (CHERI caught the memory safety violation)"
+	@echo "  ⚠ Normal program completion = Potential issue"
+	@echo "    (Vulnerability may not have been caught)"
+	@echo ""
+	@echo "Quick start: make run-all && ./interpret_results.sh"
 
-# Mark all targets as PHONY that don't create files
+# ============================================================================
+#                         ANALYSIS AND REPORTING
+# ============================================================================
+
+# Comprehensive analysis of test results
+analyze: run-all
+	@echo "=== CHERI-Morello Memory Safety Test Analysis ==="
+	@echo ""
+	@echo "Report directory: $(REPORTDIR)"
+	@trapped=0; normal=0; total=0; \
+	echo "=== Test Result Summary ==="; \
+	for log in $(REPORTDIR)/run_*.log; do \
+		if test -f "$$log"; then \
+			total=$$((total + 1)); \
+			test_name=`basename $$log .log | sed 's/run_//'`; \
+			if grep -q "In-address space security exception\|Killed\|Segmentation fault\|Abort" "$$log" 2>/dev/null; then \
+				trapped=$$((trapped + 1)); \
+				echo "  ✓ $$test_name: CHERI protection triggered (GOOD)"; \
+			else \
+				normal=$$((normal + 1)); \
+				echo "  ⚠ $$test_name: Completed normally (vulnerability not caught)"; \
+			fi; \
+		fi; \
+	done; \
+	echo ""; \
+	echo "=== Final Results ==="; \
+	echo "Total tests: $$total"; \
+	echo "Protected by CHERI: $$trapped"; \
+	echo "Completed normally: $$normal"; \
+	echo "CHERI protection rate: `expr $$trapped \* 100 / $$total 2>/dev/null || echo 0`%"; \
+	echo ""; \
+	if test $$trapped -gt $$normal; then \
+		echo "✓ CHERI-Morello is successfully catching most memory safety violations!"; \
+	else \
+		echo "⚠ Many tests completed without triggering CHERI protections."; \
+	fi
+
+# Quick summary
+summary:
+	@echo "=== Quick Test Summary ==="
+	@if test -d "$(REPORTDIR)"; then \
+		total=`ls $(REPORTDIR)/run_*.log 2>/dev/null | wc -l | tr -d ' '`; \
+		trapped=`grep -l "In-address space security exception\|Killed\|Segmentation fault\|Abort" $(REPORTDIR)/run_*.log 2>/dev/null | wc -l | tr -d ' '`; \
+		echo "Tests run: $$total"; \
+		echo "CHERI protections triggered: $$trapped"; \
+		echo "Normal completions: `expr $$total - $$trapped 2>/dev/null || echo 0`"; \
+	else \
+		echo "No reports found. Run 'make run-all' first."; \
+	fi
+
+# Show detailed logs for failed (non-trapped) tests
+show-failures:
+	@echo "=== Tests that completed normally (potential issues) ==="
+	@for log in $(REPORTDIR)/run_*.log; do \
+		if test -f "$$log" && ! grep -q "In-address space security exception\|Killed\|Segmentation fault\|Abort" "$$log" 2>/dev/null; then \
+			echo ""; \
+			echo "=== `basename $$log` ==="; \
+			cat "$$log"; \
+		fi; \
+	done
+
+# Show all test outputs
+show-all-logs:
+	@echo "=== All Test Execution Logs ==="
+	@for log in $(REPORTDIR)/run_*.log; do \
+		if test -f "$$log"; then \
+			echo ""; \
+			echo "=== `basename $$log` ==="; \
+			cat "$$log"; \
+		fi; \
+	done
+
 .PHONY: all check-environment spatial temporal realworld heap
 .PHONY: run-spatial run-temporal run-realworld run-all
 .PHONY: check-files compile-test clean clean-logs config help
+.PHONY: summary analyze show-failures show-all-logs
 
 # EOF
