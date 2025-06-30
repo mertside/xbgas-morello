@@ -369,7 +369,6 @@ cleanup_and_exit:
     
     printf("[Thread %ld] 🏁 %s test finished\n\n", tid, TEST_NAME);
 }
-}
 
 //=============================================================================
 // MAIN FUNCTION AND TEST ORCHESTRATION
