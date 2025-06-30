@@ -24,7 +24,16 @@ RTDIR = ../../runtime
 
 # Update CFLAGS with correct runtime path
 CFLAGS = -g -O2 -Wall -Wextra -std=c99 -I$(RTDIR)
+
+# Assembly source file
+ASM_SOURCE = $(RTDIR)/xbMrtime_api_asm.s
+
+# Compilation command - include assembly if it exists
+.if exists($(ASM_SOURCE))
+COMPILE = $(CC) $(CFLAGS) $(LDFLAGS) $(ASM_SOURCE)
+.else
 COMPILE = $(CC) $(CFLAGS) $(LDFLAGS)
+.endif
 
 # Output Directory
 REPORTDIR = ./reports
@@ -73,9 +82,15 @@ check-environment:
 	@echo "Working directory: `pwd`"
 	@echo "Source directory: $(SRCDIR)"
 	@echo "Runtime directory: $(RTDIR)"
+	@echo "Assembly source: $(ASM_SOURCE)"
 	@echo "Available refactored files in source dir:"
 	@ls -1 $(SRCDIR)/*_refactored*.c 2>/dev/null | wc -l | sed 's/^/  Found: /' || echo "  Found: 0"
 	@echo "Runtime directory exists: `test -d $(RTDIR) && echo YES || echo NO`"
+	@echo "Assembly source exists: `test -f $(ASM_SOURCE) && echo YES || echo NO`"
+.if !exists($(ASM_SOURCE))
+	@echo "⚠ WARNING: Assembly source not found - some tests may fail to link"
+	@echo "  Expected: $(ASM_SOURCE)"
+.endif
 	@mkdir -p $(REPORTDIR)
 
 spatial: check-environment
