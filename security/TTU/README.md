@@ -1,16 +1,15 @@
 # xBGAS-Morello TTU Memory Safety Tests
 
-**Comprehensive CHERI-Morello capability-based memory safety evaluation suite with 17 security vulnerability tests.**
+**CHERI-Morello capability-based memory safety evaluation suite with 17 security vulnerability tests.**
 
 ## Quick Start
 
 ```bash
-# Complete automated testing
-make complete-suite
+# Build and run all tests
+make run-all
 
-# Manual workflow
-make run-all           # Build and run all tests
-make interpret         # Analyze results (CHERI-aware)
+# Analyze results
+make analyze
 ```
 
 ## Test Categories
@@ -21,12 +20,12 @@ make interpret         # Analyze results (CHERI-aware)
 
 ## Build System
 
-**`Makefile_objaware`** - BSD make compatible, obj-directory aware
+**`Makefile`** - BSD make compatible, obj-directory aware
 - Auto-detects execution context (TTU vs obj directory)
 - Includes runtime assembly automatically
 - Comprehensive error handling and validation
 
-### Targets
+### Core Targets
 ```bash
 # Build
 make all spatial temporal realworld
@@ -36,9 +35,6 @@ make run-all run-spatial run-temporal run-realworld
 
 # Analysis
 make analyze summary show-failures show-all-logs
-
-# Scripts
-make complete-suite interpret system-info validate-build
 
 # Maintenance  
 make clean check-environment config help
@@ -57,15 +53,15 @@ make clean check-environment config help
 
 ```
 TTU/
-├── Makefile_objaware           # Main build system
-├── ttu_*_refactored.c         # 17 refactored test sources
-├── scripts/                   # Automation utilities
-│   ├── run_complete_suite.sh  # Complete test automation
-│   ├── interpret_results.sh   # CHERI-aware result analysis
-│   ├── system_info.sh         # Environment validation
-│   ├── validate_build.sh      # Build system test
-│   └── find_reports.sh        # Report location finder
-└── reports/                   # Execution logs (auto-created)
+├── Makefile              # Main build system
+├── Makefile_legacy       # Legacy build system backup
+├── README.md             # This documentation
+├── test_legacy.sh        # Legacy test runner
+├── results_*.txt         # Historical test results
+└── ttu_*.c              # Test source files (17 tests)
+    ├── ttu_s*.c         # Spatial safety tests (5)
+    ├── ttu_t*.c         # Temporal safety tests (7) 
+    └── ttu_r*.c         # Real-world attack tests (5)
 ```
 
 ## Dependencies
@@ -112,25 +108,25 @@ High protection rates indicate effective CHERI capability enforcement.
 ## Troubleshooting
 
 ```bash
-make system-info       # Check environment
-make validate-build    # Test build system
-make find-reports      # Locate test logs
+make check-environment # Check build environment
+make check-files       # Verify source files exist
 make debug-reports     # Debug report generation
+make find-all-reports  # Locate all test logs
 ```
 
 **Common Issues**:
 - Missing assembly source → Check `runtime/xbMrtime_api_asm.s`
 - Build failures → Verify CHERI compiler setup
-- No reports found → Run `make find-reports`
+- No reports found → Run `make debug-reports`
 
 ## Architecture
 
-**Build System**: Auto-detecting BSD make system with obj directory support  
+**Build System**: Auto-detecting BSD make with obj directory support  
 **Runtime Integration**: Automatic assembly inclusion, header path resolution  
 **Result Analysis**: CHERI-aware interpretation with protection rate calculation  
-**Automation**: Complete CI/CD ready test pipeline
+**Test Execution**: Automated build-run-analyze pipeline
 
 ---
-*xBGAS-Morello TTU Memory Safety Evaluation Suite - Capability-based Security Research Platform*
+*xBGAS-Morello TTU Memory Safety Evaluation Suite - CHERI Capability Security Research*
 
 Total: 17 refactored security tests with comprehensive automation.
