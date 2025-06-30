@@ -48,10 +48,8 @@
 #include <sys/mman.h>
 #include <stdint.h>
 
-// Include new modular headers
-#include "../../runtime/xbrtime_common.h"
-#include "../../runtime/xbrtime_api.h"
-#include "../../runtime/test.h"
+// Include xBGAS runtime headers
+#include "xbrtime_morello.h"
 
 //=============================================================================
 // TEST CONFIGURATION AND CONSTANTS
@@ -257,7 +255,7 @@ static void craft_fake_chunk(void) {
 //=============================================================================
 
 /** @brief Execute the House of Spirit heap manipulation test */
-static void* execute_house_of_spirit_test(void* arg) {
+static void execute_house_of_spirit_test(void* arg) {
     long tid = (long)arg;
     test_state.thread_id = tid;
     int recovery_signal = 0;
@@ -287,7 +285,7 @@ static void* execute_house_of_spirit_test(void* arg) {
     test_state.original_heap_ptr = malloc(CHUNK_SIZE);
     if (!test_state.original_heap_ptr) {
         printf("[Thread %ld] ❌ Failed to allocate heap memory\n", tid);
-        return NULL;
+        return;
     }
     
     test_state.original_address = (uintptr_t)test_state.original_heap_ptr;
@@ -399,7 +397,6 @@ cleanup_and_exit:
     }
     
     printf("[Thread %ld] 🏁 %s test finished\n\n", tid, TEST_NAME);
-    return NULL;
 }
 
 //=============================================================================
