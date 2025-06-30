@@ -63,7 +63,7 @@
 #define CHUNK_SIZE 0x20
 #define NUM_CHUNKS 4
 #define METADATA_PATTERN 0xDEADBEEF
-#define FAKE_CHUNK_MARKER 0xFAKECHNK
+#define FAKE_CHUNK_MARKER 0xFAKECH9K
 
 /** @brief Test phases for structured execution */
 typedef enum {
@@ -402,7 +402,6 @@ cleanup_and_exit:
     }
     
     printf("[Thread %ld] 🏁 %s test finished\n\n", tid, TEST_NAME);
-}
 }
 
 //=============================================================================
