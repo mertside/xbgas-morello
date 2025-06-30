@@ -444,45 +444,10 @@ find-all-reports:
 		echo "  Modified: `ls -l $$file | awk '{print $$6, $$7, $$8}'`"; \
 	done || echo "No run_*.log files found anywhere"
 
-# ============================================================================
-#                              SCRIPT INTEGRATION
-# ============================================================================
-
-# Quick access to organized scripts
-system-info:
-	@chmod +x scripts/system_info.sh
-	@scripts/system_info.sh
-
-validate-build:
-	@chmod +x scripts/validate_build.sh
-	@scripts/validate_build.sh
-
-complete-suite:
-	@chmod +x scripts/run_complete_suite.sh
-	@scripts/run_complete_suite.sh
-
-interpret:
-	@chmod +x scripts/interpret_results.sh
-	@scripts/interpret_results.sh
-
-find-reports:
-	@chmod +x scripts/find_reports.sh
-	@scripts/find_reports.sh
-
-# Legacy cleanup
-cleanup-scripts:
-	@chmod +x scripts/cleanup_legacy.sh
-	@scripts/cleanup_legacy.sh
-
-cleanup-docs:
-	@chmod +x scripts/cleanup_docs.sh
-	@scripts/cleanup_docs.sh
-
 .PHONY: all check-environment spatial temporal realworld heap
 .PHONY: run-spatial run-temporal run-realworld run-all
 .PHONY: check-files compile-test clean clean-logs config help
 .PHONY: summary analyze show-failures show-all-logs
 .PHONY: debug-reports find-all-reports
-.PHONY: system-info validate-build complete-suite interpret find-reports cleanup-scripts cleanup-docs
 
 # EOF
