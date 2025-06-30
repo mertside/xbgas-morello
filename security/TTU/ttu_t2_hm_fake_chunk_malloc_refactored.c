@@ -63,7 +63,7 @@
 #define CHUNK_SIZE 0x20
 #define NUM_CHUNKS 4
 #define METADATA_PATTERN 0xDEADBEEF
-#define FAKE_CHUNK_MARKER 0xFAKECH9K
+#define FAKE_CHUNK_MARKER 0xFACE1234
 
 /** @brief Test phases for structured execution */
 typedef enum {
