@@ -45,10 +45,8 @@
 #include <sys/mman.h>
 #include <stdint.h>
 
-// Include new modular headers
-#include "../../runtime/xbrtime_common.h"
-#include "../../runtime/xbrtime_api.h"
-#include "../../runtime/test.h"
+// Include xBGAS runtime headers
+#include "xbrtime_morello.h"
 
 //=============================================================================
 // TEST CONFIGURATION AND CONSTANTS
