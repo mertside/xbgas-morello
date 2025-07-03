@@ -1,132 +1,103 @@
 # xBGAS-Morello TTU Memory Safety Tests
 
-**CHERI-Morello capability-based memory safety evaluation suite with 17 security vulnerability tests.**
+**CHERI-Morello memory safety evaluation with 17 security vulnerability tests.**
 
 ## Quick Start
 
 ```bash
-# Build and run all tests
-make run-all
-
-# Analyze results
-make analyze
+make run-all    # Build and execute all tests
+make analyze    # Analyze results with CHERI interpretation
+make summary    # Quick protection rate summary
 ```
 
 ## Test Categories
 
-**Spatial Safety (5 tests)**: Buffer overflows, bounds violations, illegal memory access  
-**Temporal Safety (7 tests)**: Use-after-free, double-free, heap manipulation attacks  
-**Real-World (5 tests)**: HeartBleed, ROP/DOP, code reuse, illegal pointer dereference
+- **Spatial Safety (5)**: Buffer overflows, bounds violations, illegal memory access  
+- **Temporal Safety (7)**: Use-after-free, double-free, heap manipulation
+- **Real-World (5)**: HeartBleed, ROP/DOP, code reuse attacks
 
-## Build System
+## Key Targets
 
-**`Makefile`** - BSD make compatible, obj-directory aware
-- Auto-detects execution context (TTU vs obj directory)
-- Includes runtime assembly automatically
-- Comprehensive error handling and validation
-
-### Core Targets
 ```bash
-# Build
-make all spatial temporal realworld
+# Build by category
+make spatial temporal realworld
 
-# Execute  
+# Execute tests
 make run-all run-spatial run-temporal run-realworld
 
-# Analysis
-make analyze summary show-failures show-all-logs
+# Analysis & debugging
+make analyze summary show-failures debug-reports
 
-# Maintenance  
-make clean check-environment config help
+# Utilities
+make clean check-environment help
 ```
 
-## Result Interpretation
+## CHERI Result Interpretation
 
-**CRITICAL**: CHERI-Morello inverts traditional success/failure semantics:
+**CRITICAL**: Memory safety testing inverts normal success/failure:
 
-- ✅ **SUCCESS**: `Killed`, `In-address space security exception`, `Segmentation fault`
-  - CHERI capability system caught the memory safety violation
-- ⚠️ **CONCERN**: Normal program completion (exit code 0)
-  - Vulnerability may not have been detected
+- ✅ **`Killed`** / **`In-address space security exception`** = **SUCCESS**
+  - CHERI caught the memory safety violation
+- ⚠️ **Normal completion** = **Potential vulnerability**
+  - Attack may not have been detected
 
-## File Structure
+## Files
 
 ```
 TTU/
-├── Makefile              # Main build system
-├── Makefile_legacy       # Legacy build system backup
-├── README.md             # This documentation
-├── test_legacy.sh        # Legacy test runner
-├── results_*.txt         # Historical test results
-└── ttu_*.c              # Test source files (17 tests)
-    ├── ttu_s*.c         # Spatial safety tests (5)
-    ├── ttu_t*.c         # Temporal safety tests (7) 
-    └── ttu_r*.c         # Real-world attack tests (5)
+├── Makefile           # Main build system
+├── README.md          # This file
+├── ttu_*.c           # 17 test source files
+└── results_*.txt     # Historical results
 ```
 
 ## Dependencies
 
-- **Compiler**: cc/gcc/clang with CHERI support
-- **Runtime**: `../../runtime/xbrtime_morello.h`, `xbMrtime_api_asm.s`
-- **Build**: BSD make or GNU make
-- **System**: CHERI-Morello capable platform
+- CHERI-capable compiler (`cc`/`gcc`/`clang`)
+- Runtime headers: `../../runtime/xbrtime_morello.h`
+- Assembly source: `../../runtime/xbMrtime_api_asm.s`
+- BSD make or GNU make
 
-## Test Details
+## Test List
 
 ### Spatial Safety
-- `ttu_s1_free_not_at_start` - Free with offset pointer
-- `ttu_s2_free_not_on_heap` - Free stack/global memory  
+- `ttu_s1_free_not_at_start` - Offset pointer free
+- `ttu_s2_free_not_on_heap` - Stack/global memory free
 - `ttu_s3_null_ptr_dereference` - NULL pointer access
 - `ttu_s4_oob_read` - Out-of-bounds read
 - `ttu_s5_oob_write` - Out-of-bounds write
 
-### Temporal Safety  
+### Temporal Safety
 - `ttu_t1_double_free` - Double free vulnerability
-- `ttu_t2_hm_fake_chunk_malloc` - Heap metadata manipulation
-- `ttu_t3_hm_house_of_spirit` - Fake chunk attack
-- `ttu_t4_hm_p_and_c_chunk` - Parent/child chunk manipulation
-- `ttu_t5_use_after_free` - Use-after-free access
+- `ttu_t2_hm_fake_chunk_malloc` - Fake heap chunk
+- `ttu_t3_hm_house_of_spirit` - House of Spirit attack
+- `ttu_t4_hm_p_and_c_chunk` - Parent/child chunk exploit
+- `ttu_t5_use_after_free` - Use-after-free
 - `ttu_t6_uaf_function_pointer` - Function pointer UAF
 - `ttu_t7_uaf_memcpy` - UAF with memcpy
 
-### Real-World Attacks
-- `ttu_r1_HeartBleed` - OpenSSL HeartBleed simulation  
+### Real-World
+- `ttu_r1_HeartBleed` - OpenSSL HeartBleed
 - `ttu_r2_dop` - Data-oriented programming
-- `ttu_r3_uaf_to_code_reuse` - UAF leading to code reuse
+- `ttu_r3_uaf_to_code_reuse` - UAF to code reuse
 - `ttu_r4_illegal_ptr_deref` - Illegal pointer dereference
-- `ttu_r5_df_switch` - Double-free in switch statement
+- `ttu_r5_df_switch` - Double-free in switch
 
-## Expected Results
+## Expected Protection Rates
 
-**CHERI Protection Rates**:
-- Spatial: 80-100% (most bounds violations caught)
-- Temporal: 60-80% (heap attacks vary)  
-- Real-World: 70-90% (depends on attack complexity)
-
-High protection rates indicate effective CHERI capability enforcement.
+- **Spatial**: 80-100% (bounds checking effective)
+- **Temporal**: 60-80% (heap attacks harder to detect)
+- **Real-World**: 70-90% (varies by attack complexity)
 
 ## Troubleshooting
 
 ```bash
-make check-environment # Check build environment
-make check-files       # Verify source files exist
-make debug-reports     # Debug report generation
-make find-all-reports  # Locate all test logs
+make check-environment  # Verify build setup
+make debug-reports     # Check report generation
+make find-all-reports  # Locate test logs
 ```
 
-**Common Issues**:
-- Missing assembly source → Check `runtime/xbMrtime_api_asm.s`
-- Build failures → Verify CHERI compiler setup
-- No reports found → Run `make debug-reports`
-
-## Architecture
-
-**Build System**: Auto-detecting BSD make with obj directory support  
-**Runtime Integration**: Automatic assembly inclusion, header path resolution  
-**Result Analysis**: CHERI-aware interpretation with protection rate calculation  
-**Test Execution**: Automated build-run-analyze pipeline
-
 ---
-*xBGAS-Morello TTU Memory Safety Evaluation Suite - CHERI Capability Security Research*
+*CHERI-Morello Memory Safety Research Framework*
 
 Total: 17 refactored security tests with comprehensive automation.

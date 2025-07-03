@@ -49,3 +49,142 @@ The repository includes multiple categories of memory safety tests:
 - Data-oriented programming attacks
 - Control flow hijacking
 - Code reuse attacks
+
+## Directory Structure
+
+```
+xbgas-morello/
+├── bench/                    # Performance benchmarks and test programs
+│   ├── openshmem/           # OpenSHMEM tests
+│   └── gups/               # Global Updates Per Second benchmarks
+├── docs/                    # Project documentation and UML diagrams
+├── runtime/                 # xBGAS runtime implementation for CHERI-Morello
+│   ├── xbrtime_morello.h   # Main runtime header
+│   ├── xbMrtime_api_asm.s  # Assembly API functions
+│   └── *.h                 # Runtime type definitions and macros
+└── security/               # Memory safety evaluation suites
+    ├── TTU/               # Texas Tech University test suite
+    ├── ASU/               # Arizona State University test suite
+    ├── UoC/               # University of Cambridge test suite  
+    └── experimental/      # Experimental vulnerability tests
+```
+
+## Quick Start
+
+### Prerequisites
+
+- CHERI-Morello development environment
+- ARM Fixed Virtual Platform (FVP) or Morello hardware
+- BSD-compatible make
+- GCC toolchain with CHERI support
+
+### Building and Running TTU Security Tests
+
+The TTU security test suite is the primary, production-ready evaluation framework:
+
+```bash
+# Navigate to the TTU test suite
+cd security/TTU
+
+# Build all tests
+make all
+
+# Run all tests and generate results
+make run
+
+# Build and run specific categories
+make spatial          # Spatial safety tests
+make temporal         # Temporal safety tests  
+make real-world       # Real-world vulnerability tests
+
+# Generate analysis and reports
+make analysis         # Analyze CHERI trap results
+make summary          # Generate test summary
+make logs            # Show detailed build logs
+```
+
+### Test Categories
+
+The TTU suite includes 17 comprehensive memory safety tests:
+
+**Spatial Safety Tests (5 tests)**
+- `ttu_s1_free_not_at_start` - Invalid free() calls
+- `ttu_s2_free_not_on_heap` - Free of non-heap memory
+- `ttu_s3_null_ptr_dereference` - Null pointer dereference
+- `ttu_s4_oob_read` - Out-of-bounds read access
+- `ttu_s5_oob_write` - Out-of-bounds write access
+
+**Temporal Safety Tests (7 tests)**
+- `ttu_t1_double_free` - Double free vulnerabilities
+- `ttu_t2_hm_fake_chunk_malloc` - Heap metadata manipulation
+- `ttu_t3_hm_house_of_spirit` - House of Spirit attack
+- `ttu_t4_hm_p_and_c_chunk` - Parent/child chunk manipulation
+- `ttu_t5_use_after_free` - Use-after-free vulnerabilities
+- `ttu_t6_uaf_function_pointer` - UAF with function pointers
+- `ttu_t7_uaf_memcpy` - UAF in memory operations
+
+**Real-world Vulnerability Tests (5 tests)**
+- `ttu_r1_HeartBleed` - HeartBleed-style buffer over-read
+- `ttu_r2_dop` - Data-oriented programming attacks
+- `ttu_r3_uaf_to_code_reuse` - UAF leading to code reuse
+- `ttu_r4_illegal_ptr_deref` - Illegal pointer dereference
+- `ttu_r5_df_switch` - Double-free in switch statements
+
+## Build System Features
+
+The TTU Makefile provides:
+
+- **BSD Make Compatibility** - Works with FreeBSD, NetBSD, OpenBSD make
+- **Object Directory Awareness** - Respects `MAKEOBJDIR` and `.OBJDIR`
+- **Category-based Building** - Build tests by vulnerability type
+- **CHERI-aware Analysis** - Automatic detection of capability violations
+- **Comprehensive Reporting** - Detailed logs and summaries
+- **Error Handling** - Robust error detection and reporting
+
+## CHERI-Morello Integration
+
+The tests leverage CHERI's capability-based security features:
+
+- **Spatial Safety** - Capability bounds checking prevents buffer overflows
+- **Temporal Safety** - Capability revocation prevents use-after-free
+- **Control Flow Integrity** - Code capabilities prevent ROP/JOP attacks
+- **Pointer Integrity** - Capability tags prevent pointer manipulation
+
+When CHERI protections are active, memory safety violations trigger capability exceptions that are detected and reported by the test framework.
+
+## Performance Benchmarks
+
+The `bench/` directory contains performance evaluation tools:
+
+- **OpenSHMEM Benchmarks** - Compatibility and performance tests
+- **GUPS Benchmarks** - Global Updates Per Second measurements
+- **Matrix Operations** - Computational workload tests
+- **Communication Patterns** - Inter-process communication benchmarks
+
+## Contributing
+
+1. Follow the existing code style and documentation standards
+2. Add new tests to appropriate categories (spatial/temporal/real-world)
+3. Update the Makefile to include new tests
+4. Ensure tests work with both CHERI-enabled and baseline configurations
+5. Add comprehensive documentation for new features
+
+## Research Context
+
+This framework supports research in:
+
+- **Memory Safety Evaluation** - Quantifying protection effectiveness
+- **Performance Analysis** - Measuring CHERI overhead
+- **Security Assessment** - Evaluating attack surface reduction
+- **Runtime System Design** - Optimizing capability-based systems
+
+## License
+
+This project builds upon various open-source components. See individual directories for specific licensing information.
+
+## Acknowledgments
+
+- ARM for the Morello platform and FVP emulation
+- University of Cambridge for CHERI architecture research
+- Arizona State University for the initial vulnerability test suite
+- xBGAS project contributors, and especially Tactical Computing Labs, for the runtime foundation
