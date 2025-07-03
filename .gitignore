@@ -1,0 +1,11 @@
+# OS clutter
+.DS_Store
+
+# Editor / IDE artefacts
+.idea/
+.vscode/
+
+# Executable files
+*.out
+*.exe
+*.core
