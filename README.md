@@ -55,15 +55,19 @@ The repository includes multiple categories of memory safety tests:
 ```
 xbgas-morello/
 ├── bench/                    # Performance benchmarks and test programs
-│   ├── openshmem/           # OpenSHMEM tests
+│   ├── README.md            # Benchmark documentation and usage guide
+│   ├── openshmem/           # OpenSHMEM compatibility tests
 │   └── gups/               # Global Updates Per Second benchmarks
 ├── docs/                    # Project documentation and UML diagrams
+│   └── README.md           # Documentation index and architecture overview
 ├── runtime/                 # xBGAS runtime implementation for CHERI-Morello
 │   ├── xbrtime_morello.h   # Main runtime header
 │   ├── xbMrtime_api_asm.s  # Assembly API functions
 │   └── *.h                 # Runtime type definitions and macros
 └── security/               # Memory safety evaluation suites
-    ├── TTU/               # Texas Tech University test suite
+    ├── README.md           # Security suite overview
+    ├── TTU/               # Texas Tech University test suite (production-ready)
+    │   └── README.md      # TTU test documentation and usage
     ├── ASU/               # Arizona State University test suite
     ├── UoC/               # University of Cambridge test suite  
     └── experimental/      # Experimental vulnerability tests
@@ -105,14 +109,16 @@ make logs            # Show detailed build logs
 
 ### Test Categories
 
-The TTU suite includes 17 comprehensive memory safety tests:
+The TTU suite includes 17 core memory safety tests plus 2 baseline comparison tests (19 total):
 
-**Spatial Safety Tests (5 tests)**
+**Spatial Safety Tests (5 tests + 2 baselines)**
 - `ttu_s1_free_not_at_start` - Invalid free() calls
 - `ttu_s2_free_not_on_heap` - Free of non-heap memory
 - `ttu_s3_null_ptr_dereference` - Null pointer dereference
 - `ttu_s4_oob_read` - Out-of-bounds read access
 - `ttu_s5_oob_write` - Out-of-bounds write access
+- `ttu_s4_baseline_oob_read` - Baseline comparison for OOB read
+- `ttu_s5_baseline_oob_write` - Baseline comparison for OOB write
 
 **Temporal Safety Tests (7 tests)**
 - `ttu_t1_double_free` - Double free vulnerabilities
@@ -152,14 +158,40 @@ The tests leverage CHERI's capability-based security features:
 
 When CHERI protections are active, memory safety violations trigger capability exceptions that are detected and reported by the test framework.
 
-## Performance Benchmarks
+## Performance Benchmarks (`bench/`)
 
-The `bench/` directory contains performance evaluation tools:
+The [`bench/`](bench/) directory contains a comprehensive performance evaluation framework for measuring CHERI-Morello overhead and scalability:
 
-- **OpenSHMEM Benchmarks** - Compatibility and performance tests
-- **GUPS Benchmarks** - Global Updates Per Second measurements
-- **Matrix Operations** - Computational workload tests
-- **Communication Patterns** - Inter-process communication benchmarks
+### Benchmark Categories
+
+**Core xBGAS Operations**
+- `xbrtime_matmul.c` - Matrix multiplication with distributed memory patterns
+- `xbrtime_gather.c` - Gather operations testing remote memory collection  
+- `xbrtime_gups.c` - Global Updates Per Second (memory bandwidth intensive)
+- `xbrtime_broadcast8.c` - Collective communication patterns
+- `xbrtime_reduction8.c` - Reduction operations across processing elements
+
+**SHMEM Compatibility Tests**
+- `SHMEMRandomAccess.c` - SHMEM-style random memory access patterns
+- `SHMEMRandomAccess_v2.c` - Enhanced version with improved algorithms
+- `openshmem/` - Full OpenSHMEM compatibility benchmark suite
+
+**Specialized Performance Tests**  
+- `gups/` - HPCC-compliant GUPS benchmarks for standardized comparison
+
+### Key Metrics
+- **Memory bandwidth** under CHERI capability protection
+- **Thread pool efficiency** with memory safety constraints
+- **Remote memory access performance** with capability bounds checking
+- **Scalability characteristics** across multiple processing elements
+
+```bash
+# Navigate to benchmarks
+cd bench/
+
+# Build and run all benchmarks
+make all && make test
+```
 
 ## Contributing
 
@@ -186,5 +218,5 @@ This project builds upon various open-source components. See individual director
 
 - ARM for the Morello platform and FVP emulation
 - University of Cambridge for CHERI architecture research
-- Arizona State University for the initial vulnerability test suite
+- Texas Tech University for the vulnerability test suite development
 - xBGAS project contributors, and especially Tactical Computing Labs, for the runtime foundation

@@ -1,6 +1,6 @@
 # xBGAS-Morello TTU Memory Safety Tests
 
-**CHERI-Morello memory safety evaluation with 17 security vulnerability tests.**
+**CHERI-Morello memory safety evaluation with 17 core security vulnerability tests plus 2 baseline comparison tests (19 total).**
 
 ## Quick Start
 
@@ -47,7 +47,7 @@ make clean check-environment help
 TTU/
 ├── Makefile           # Main build system
 ├── README.md          # This file
-├── ttu_*.c           # 17 test source files
+├── ttu_*.c           # 17 core tests + 2 baseline tests (19 total)
 └── results_*.txt     # Historical results
 ```
 
@@ -66,6 +66,8 @@ TTU/
 - `ttu_s3_null_ptr_dereference` - NULL pointer access
 - `ttu_s4_oob_read` - Out-of-bounds read
 - `ttu_s5_oob_write` - Out-of-bounds write
+- `ttu_s4_baseline_oob_read` - Baseline OOB read comparison
+- `ttu_s5_baseline_oob_write` - Baseline OOB write comparison
 
 ### Temporal Safety
 - `ttu_t1_double_free` - Double free vulnerability

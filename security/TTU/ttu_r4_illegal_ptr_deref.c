@@ -28,7 +28,7 @@
  * - Traditional systems: Undefined behavior, potential crashes or corruption
  * - CHERI-Morello: Capability fault on invalid pointer dereference
  * 
- * @author TTU Security Research Team
+ * @author Mert Side
  * @date 2024
  * @version 2.0 (Refactored)
  */

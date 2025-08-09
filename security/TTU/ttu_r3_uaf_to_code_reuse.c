@@ -28,7 +28,7 @@
  * - Traditional systems: Code reuse attack succeeds, gadget() executes
  * - CHERI-Morello: Capability fault on use-after-free access
  * 
- * @author TTU Security Research Team
+ * @author Mert Side
  * @date 2024
  * @version 2.0 (Refactored)
  */

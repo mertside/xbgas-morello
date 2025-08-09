@@ -34,7 +34,7 @@
  * - Traditional systems: Undefined behavior, crashes, heap corruption
  * - CHERI-Morello: Capability fault on invalid free attempt
  * 
- * @author TTU Security Research Team
+ * @author Mert Side
  * @date 2024
  * @version 2.0 (Refactored)
  */

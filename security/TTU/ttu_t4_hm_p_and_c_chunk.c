@@ -35,7 +35,7 @@
  * - Traditional systems: Heap corruption, overlapping allocations
  * - CHERI-Morello: Capability fault on bounds violation
  * 
- * @author TTU Security Research Team
+ * @author Mert Side
  * @date 2024
  * @version 2.0 (Refactored)
  */
